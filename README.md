@@ -17,3 +17,8 @@
   - Calcul des forces répulsives et attractives dans le champ de vision -> accélération
 - Entrée : 2 points + débit
 - Sortie : 2 points
+## Répartition des tâches
+1. Lila : Visualisation graphique
+2. Anne : Client
+3. Corentin : Calcul des forces répulsives et attractives
+4. Clément :
