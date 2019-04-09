@@ -1,14 +1,27 @@
 from math import inf
 
+idWall = 0
+idStand = 0
+idClient = 0
+idEntry = 0
+idExit = 0
+idShop = 0
+
 class Wall:
     def __init__(self, x1, y1, x2, y2):
         self.x1 = x1
         self.y1 = y1
         self.x2 = x2
         self.y2 = y2
+        global idWall
+        self.id = idWall
+        idWall+=1
 
     def getPos(self):
         return [self.x1,self.y1,self.x2,self.y2]
+
+    def getId(self):
+        return self.id
 
 
 class Stand:
@@ -17,6 +30,9 @@ class Stand:
         self.y1 = y1
         self.x2 = x2
         self.y2 = y2
+        global idStand
+        self.id = idStand
+        idStand+=1
 
     def getPos(self):
         return [self.x1,self.y1,self.x2,self.y2]
@@ -30,6 +46,8 @@ class Stand:
             return True
         else:
             return False
+    def getId(self):
+        return self.id
 
 class Client:
     def __init__(self, x, y, v_x, v_y, tRemain, nbPurchased=0, nbRemain=None, attractCoef=None):
@@ -41,6 +59,9 @@ class Client:
         self.nbPurchased = nbPurchased
         self.nb_remain = nbRemain
         self.leaving = False
+        global idClient
+        self.id = idClient
+        idClient+=1
 
         if nbRemain is None:
             self.nb_remain = inf
@@ -86,6 +107,9 @@ class Client:
     def updateArticle(self):
         self.nb_remain+=-1
 
+    def getId(self):
+        return self.id
+
 class Entry:
     def __init__(self,x1,y1,x2,y2,flow):
         self.x1 = x1
@@ -93,6 +117,9 @@ class Entry:
         self.x2 = x2
         self.y2 = y2
         self.flow = flow
+        global idEntry
+        self.id = idEntry
+        idEntry+=1
 
     def getPos(self):
         return [self.x1,self.y1,self.x2,self.y2]
@@ -100,15 +127,24 @@ class Entry:
     def getFlow(self):
         return self.flow
 
+    def getId(self):
+        return self.id
+
 class Exit:
     def __init__(self,x1,y1,x2,y2):
         self.x1 = x1
         self.y1 = y1
         self.x2 = x2
         self.y2 = y2
+        global idExit
+        self.id = idExit
+        idExit+=1
 
     def getPos(self):
         return [self.x1,self.y1,self.x2,self.y2]
+
+    def getId(self):
+        return self.id
 
 class Shop:
     def __init__(self,name):
@@ -117,8 +153,11 @@ class Shop:
         self.walls = []
         self.stands = []
         self.clients = []
-        self.entry = []
-        self.exit = []
+        self.entries = []
+        self.exits = []
+        global idShop
+        self.id = idShop
+        idShop+=1
 
     def getWalls(self):
         return self.walls
@@ -147,11 +186,23 @@ class Shop:
     def addClient(self,client):
         self.clients.append(client)
 
-    def updateEntry(self,entry):
-        self.entry = entry
+    def addEntry(self,entry):
+        self.entries.append(entry)
 
-    def updateExit(self,exit):
-        self.exit = exit
+    def addExit(self,exit):
+        self.exits.append(exit)
+
+    def removeEntry(self,id):
+        for i in range(len(self.entries)):
+            if self.entries[i].getId() == id:
+                self.entries.remove(i)
+    def removeExit(self,id):
+        for i in range(len(self.exits)):
+            if self.exits[i].getId() == id:
+                self.exits.remove(i)
 
     def purchase(self,n=1):
         self.articlesBougth += n
+
+    def getId(self):
+        return self.id

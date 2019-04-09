@@ -1,4 +1,5 @@
 from flux_magasin.model.environnement import * #importé de cette façon et pas avec import flux_magasin.model.environnement, qui rendrait claque appel de mur illisible
+import matplotlib.pyplot as plt
 
 wall1 = Wall(1,2,3,4)
 
@@ -21,7 +22,7 @@ t = 0 #temps initial
 dt = 0.1 #On calcule toutes les dt secondes
 cnt = 0  #Initialisation du conteur
 cntReset = 10 #on affiche toutes les cnt*dt secondes
-T = 3600 #durée de l'expérience
+T = 0.05 #durée de l'expérience
 
 ####
 
@@ -32,5 +33,7 @@ while t<T:
         cnt = 0
         ##afficher
 
+    #ajouter pour attendre dt
     t+=dt
     cnt+=1
+print(id(shop),id(shop.getWalls()[0]),id(shop.getWalls()[1]),shop.getWalls()[1].getId())
