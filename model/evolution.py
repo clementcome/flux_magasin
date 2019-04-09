@@ -38,6 +38,8 @@ while t<T:
         client.setSpeed(speed+dv)
         client.setPos(pos+dt*dv)
     #ajouter pour attendre dt
-    t+=dt
-    cnt+=1
-print(exteriorForces(shop.getClients()[0],shop))
+    t += dt
+    cnt += 1
+
+if __name__ == '__main__':
+    print(exteriorForces(shop.getClients()[0], shop))

@@ -134,4 +134,4 @@ if __name__ == '__main__':
     affichage_clients(Shop_test, magasin)
     root.mainloop()
 
-creation_legende()
+    creation_legende()

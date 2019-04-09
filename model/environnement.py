@@ -15,6 +15,7 @@ class Wall:
         self.y1 = y1
         self.x2 = x2
         self.y2 = y2
+
         global idWall
         self.id = idWall
         idWall+=1
@@ -86,7 +87,7 @@ class Stand:
 
 
 class Client:
-    def __init__(self, x, y, v_x, v_y, tRemain, nbPurchased=0, nbRemain=None, attractCoef=None):
+    def __init__(self, x, y, v_x, v_y, tRemain, nbPurchased=0, nbRemain=inf, attractCoef=1):
         self.x = x
         self.y = y
         self.v_x = v_x
@@ -94,20 +95,12 @@ class Client:
         self.t_remain = tRemain
         self.nbPurchased = nbPurchased
         self.nb_remain = nbRemain
+        self.attract_coef = attractCoef
         self.leaving = False
+
         global idClient
         self.id = idClient
-        idClient+=1
-
-        if nbRemain is None:
-            self.nb_remain = inf
-        else:
-            self.nb_remain = nbRemain
-
-        if attractCoef is None:
-            self.attract_coef = 1
-        else:
-            self.attract_coef = attractCoef
+        idClient += 1
 
     def getPos(self):
         return np.array([self.x,self.y])
@@ -141,7 +134,7 @@ class Client:
             self.leaving = True
 
     def updateArticle(self):
-        self.nb_remain+=-1
+        self.nb_remain -= 1
 
     def getId(self):
         return self.id
@@ -153,6 +146,7 @@ class Entry:
         self.x2 = x2
         self.y2 = y2
         self.flow = flow
+
         global idEntry
         self.id = idEntry
         idEntry+=1
@@ -185,12 +179,13 @@ class Exit:
 class Shop:
     def __init__(self,name):
         self.name = name
-        self.articlesBougth = 0
+        self.articlesBought = 0
         self.walls = []
         self.stands = []
         self.clients = []
         self.entries = []
         self.exits = []
+
         global idShop
         self.id = idShop
         idShop+=1
@@ -239,7 +234,7 @@ class Shop:
                 self.exits.remove(i)
 
     def purchase(self,n=1):
-        self.articlesBougth += n
+        self.articlesBought += n
 
     def getId(self):
         return self.id
