@@ -1,6 +1,6 @@
 from math import inf
 import numpy as np
-from flux_magasin.model.forces import norm
+from flux_magasin.model.forces import *
 
 idWall = 0
 idStand = 0
@@ -46,6 +46,8 @@ class StandWall:
             return np.array([1,-(self.x2-self.x1)/(self.y2-self.y1)])/norm(np.array([1,-(self.x2-self.x1)/(self.y2-self.y1)]))
         else:
             return np.array([0,1])
+
+
 class Stand:
     def __init__(self, x1, y1, x2, y2):
         if x1<x2:

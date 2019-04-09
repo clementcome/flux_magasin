@@ -98,12 +98,14 @@ def affichage_magasin(shop, canevas):
 def affichage_clients(shop, canevas, direction=False):
 
     clients = shop.getClients()
+    liste_boules = []
     for client in clients:
         coord = client.getPos()
-        canevas.create_oval(coord[0]+5, coord[1]+5, coord[0]+15, coord[1]+15, fill='green')
+        liste_boules.append(canevas.create_oval(coord[0]+5, coord[1]+5, coord[0]+15, coord[1]+15, fill='green'))
         if direction:
             vitesse = client.getSpeed()
             canevas.create_line(coord[0]+10, coord[1]+10, coord[0]+5*vitesse[0]+10, coord[1]+5*vitesse[1]+10, fill='green', arrow='last')
+    return liste_boules
 
 
 

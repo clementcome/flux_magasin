@@ -4,7 +4,7 @@ from flux_magasin.model.forces import *
 from flux_magasin.model.intersections import *
 from flux_magasin.model.representation_graphique_statique import *
 import random as rd
-
+import time
 
 
 def representation_evolution(shop, dt, T):
@@ -34,8 +34,8 @@ def representation_evolution(shop, dt, T):
 
     #Afficher le magasin
     affichage_magasin(shop, magasin)
-    #Afficher le point de départ des clients
-    affichage_clients(shop, magasin)
+    #Afficher le point de départ des clients et récupérer la liste des clients
+    liste_boules = affichage_clients(shop, magasin)
 
 
     while t < T:
@@ -45,20 +45,29 @@ def representation_evolution(shop, dt, T):
             pos = client.getPos()
             speed = client.getSpeed()
             client.setSpeed(speed+dv)
-            print(pos+dt*dv)
             client.setPos(pos+dt*speed)
-        #Affichage des clients
-        affichage_clients(shop, magasin)
+            #Déplacement des clients
+            magasin.move(liste_boules[client.getId()-2], speed[0], speed[1])
+            root.update()
+            time.sleep(.01)
         t += dt
     root.mainloop()
 
 
+
+idWall = 0
+idStand = 0
+idClient = 0
+idEntry = 0
+idExit = 0
+idShop = 0
 
 Murs_test = [Wall(0,0,0,200), Wall(0,200,300,200), Wall(300,200,300,0), Wall(300,0,0,0)]
 Entrees_test = [Entry(200,0,245,0,45), Entry(150,200,180,200,45)]
 Sorties_test = [Exit(0,100,0,150), Exit(150,200,180,200)]
 Meubles_test = [Stand(0,0,25,50), Stand(150,150,250,180)]
 Clients_test = [Client(45,78,-0.2,0.4,6)]
+
 
 Shop_test = Shop('test')
 for wall in Murs_test:
@@ -74,4 +83,4 @@ for client in Clients_test:
 
 
 if __name__ == '__main__':
-    representation_evolution(Shop_test, 10, 200)
+    representation_evolution(Shop_test, 1, 200)
