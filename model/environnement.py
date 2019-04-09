@@ -1,4 +1,6 @@
 from math import inf
+import numpy as np
+from flux_magasin.model.forces import norm
 
 idWall = 0
 idStand = 0
@@ -24,7 +26,7 @@ class Wall:
         return self.id
 
     def getNormal(self):
-        return "caca"
+        return np.array([1,-(self.x2-self.x1)/(self.y2-self.y1)])/norm(np.array([1,-(self.x2-self.x1)/(self.y2-self.y1)]))
 
 
 class Stand:

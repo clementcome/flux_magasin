@@ -8,7 +8,7 @@ d_0 = 1
 def lambd(x):
     return np.exp(1/x)-1
 
-def nom(vect):
+def norm(vect):
     return np.sqrt(vect[0]**2+vect[1]**2)
 
 def exteriorForces(client,shop):
