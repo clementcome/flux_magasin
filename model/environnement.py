@@ -181,10 +181,10 @@ class Shop:
         return self.clients
 
     def getEntry(self):
-        return self.entry
+        return self.entries
 
     def getExit(self):
-        return self.exit
+        return self.exits
 
     def getNumberClients(self):
         return len(self.clients)
