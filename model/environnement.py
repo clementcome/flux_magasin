@@ -7,19 +7,17 @@ class Wall:
         self.x2 = x2
         self.y2 = y2
 
-    @property
-    def getCoordinates(self):
+    def getPos(self):
         return [self.x1,self.y1,self.x2,self.y2]
 
 
-class Meuble:
+class Stand:
     def __init__(self, x1, y1, x2, y2):
         self.x1 = x1
         self.y1 = y1
         self.x2 = x2
         self.y2 = y2
 
-    @property
     def getPos(self):
         return [self.x1,self.y1,self.x2,self.y2]
 
@@ -34,12 +32,13 @@ class Meuble:
             return False
 
 class Client:
-    def __init__(self, x, y, v_x, v_y, tRemain, nbRemain=None, attractCoef=None):
+    def __init__(self, x, y, v_x, v_y, tRemain, nbPurchased=0, nbRemain=None, attractCoef=None):
         self.x = x
         self.y = y
         self.v_x = v_x
         self.v_y = v_y
         self.t_remain = tRemain
+        self.nbPurchased = nbPurchased
         self.nb_remain = nbRemain
         self.leaving = False
 
@@ -52,7 +51,7 @@ class Client:
             self.attract_coef = 1
         else:
             self.attract_coef = attractCoef
-    @property
+
     def getPos(self):
         return [self.x,self.y]
 
@@ -61,6 +60,9 @@ class Client:
 
     def getTime(self):
         return self.t_remain
+
+    def getNbPurchased(self):
+        return self.nbPurchased
 
     def getArticle(self):
         return self.nb_remain
@@ -92,8 +94,6 @@ class Entry:
         self.y2 = y2
         self.flow = flow
 
-    @property
-
     def getPos(self):
         return [self.x1,self.y1,self.x2,self.y2]
 
@@ -107,7 +107,51 @@ class Exit:
         self.x2 = x2
         self.y2 = y2
 
-    @property
-
     def getPos(self):
         return [self.x1,self.y1,self.x2,self.y2]
+
+class Shop:
+    def __init__(self,name):
+        self.name = name
+        self.articlesBougth = 0
+        self.walls = []
+        self.stands = []
+        self.clients = []
+        self.entry = []
+        self.exit = []
+
+    def getWalls(self):
+        return self.walls
+
+    def getStands(self):
+        return self.stands
+
+    def getClients(self):
+        return self.clients
+
+    def getEntry(self):
+        return self.entry
+
+    def getExit(self):
+        return self.exit
+
+    def getNumberClients(self):
+        return len(self.clients)
+
+    def addWall(self,wall):
+        self.walls.append(wall)
+
+    def addStand(self,stand):
+        self.stands.append(stand)
+
+    def addClient(self,client):
+        self.clients.append(client)
+
+    def updateEntry(self,entry):
+        self.entry = entry
+
+    def updateExit(self,exit):
+        self.exit = exit
+
+    def purchase(self,n=1):
+        self.articlesBougth += n
