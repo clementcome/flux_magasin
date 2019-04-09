@@ -24,7 +24,7 @@ class Wall:
         return self.id
 
     def getNormal(self):
-        return
+        return "caca"
 
 
 class Stand:
@@ -208,7 +208,7 @@ class Shop:
         for i in range(len(self.entries)):
             if self.entries[i].getId() == id:
                 self.entries.remove(i)
-    
+
     def removeExit(self,id):
         for i in range(len(self.exits)):
             if self.exits[i].getId() == id:
