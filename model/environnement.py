@@ -221,3 +221,8 @@ class Shop:
 
     def getId(self):
         return self.id
+
+    def getClientById(self,idC):
+        for client in self.clients:
+            if client.getId() == idC:
+                return client

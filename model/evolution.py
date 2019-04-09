@@ -1,8 +1,6 @@
 from flux_magasin.model.environnement import * #importé de cette façon et pas avec import flux_magasin.model.environnement, qui rendrait claque appel de mur illisible
+from flux_magasin.model.forces import *
 import matplotlib.pyplot as plt
-
-
-wall1 = Wall(1,2,3,4)
 
 shop = Shop("Zara")
 
@@ -16,8 +14,8 @@ for stand in stands:
     shop.addStand(stand)
 for client in clients:
     shop.addClient(client)
-shop.updateEntry(Entry(0,100,0,150,45))
-shop.updateExit(Exit(200,0,250,0))
+shop.addEntry(Entry(0,100,0,150,45))
+shop.addExit(Exit(200,0,250,0))
 
 t = 0 #temps initial
 dt = 0.1 #On calcule toutes les dt secondes
@@ -37,4 +35,4 @@ while t<T:
     #ajouter pour attendre dt
     t+=dt
     cnt+=1
-print(id(shop),id(shop.getWalls()[0]),id(shop.getWalls()[1]),shop.getWalls()[1].getId())
+print(exteriorForces(shop.getClients()[0],shop))

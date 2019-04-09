@@ -18,6 +18,6 @@ def exteriorForces(client,shop):
 
     for otherClient in shop.getClients():
         if otherClient.getId()!= client.getId():
-            forces += F_0 * (np.array(client.getPos())-np.array(otherClient.getPos))/abs(norm(np.array(client.getPos())-np.array(otherClient.getPos))**2-d_0**2)
-
-print(np.zeros(2))
+            print('cpicpi')
+            forces = forces + F_0 * (np.array(client.getPos())-np.array(otherClient.getPos()))/abs(norm(np.array(client.getPos())-np.array(otherClient.getPos()))**2-d_0**2)
+    return forces
