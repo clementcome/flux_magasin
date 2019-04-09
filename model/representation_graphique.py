@@ -26,7 +26,13 @@ def creation_fenetre(shop):
     magasin.pack()
 
 
-def affichage_magasin(murs, meubles, entrees, sorties, canevas):
+def affichage_magasin(shop, canevas):
+
+    meubles = shop.getStands()
+    murs = shop.getWalls()
+    entrees = shop.getEntry()
+    sorties = shop.getExit()
+
     for meuble in meubles:
         coord = meuble.getPos()
         canevas.create_rectangle(coord[0]+10, coord[1]+10, coord[2]+10, coord[3]+10, fill='purple')
@@ -37,15 +43,31 @@ def affichage_magasin(murs, meubles, entrees, sorties, canevas):
 
     for entree in entrees:
         coord = entree.getPos()
-        canevas.create_line(coord[0]+10, coord[1]+10, coord[2]+10, coord[3]+10, width=10, fill='blue')
-
+        canevas.create_line(coord[0]+10, coord[1]+10, coord[2]+10, coord[3]+10, width=10, fill='white')
     for sortie in sorties:
         coord = sortie.getPos()
-        canevas.create_line(coord[0]+10, coord[1]+10, coord[2]+10, coord[3]+10, width=10, fill='red')
+        canevas.create_line(coord[0]+10, coord[1]+10, coord[2]+10, coord[3]+10, width=10, fill='white')
 
+    for entree in entrees:
+        coord = entree.getPos()
+        if coord[0] == coord[2]:
+            for i in range(5,15):
+                canevas.create_line(coord[0]+i, coord[1]+10, coord[2]+i, coord[3]+10, width=1, fill='blue', dash=(1,1))
+        elif coord[1] == coord[3]:
+            for i in range(5,15):
+                canevas.create_line(coord[0]+10, coord[1]+i, coord[2]+10, coord[3]+i, width=1, fill='blue', dash=(1,1))
+    for sortie in sorties:
+        coord = sortie.getPos()
+        if coord[0] == coord[2]:
+            for i in range(5,15):
+                canevas.create_line(coord[0]+i, coord[1]+13, coord[2]+i, coord[3]+8, width=1, fill='red', dash=(1,1))
+        elif coord[1] == coord[3]:
+            for i in range(5,15):
+                canevas.create_line(coord[0]+13, coord[1]+i, coord[2]+8, coord[3]+i, width=1, fill='red', dash=(1,1))
 
-def affichage_clients(clients, canevas, direction=False):
+def affichage_clients(shop, canevas, direction=False):
 
+    clients = shop.getClients()
     for client in clients:
         coord = client.getPos()
         canevas.create_oval(coord[0]+5, coord[1]+5, coord[0]+15, coord[1]+15, fill='green')
@@ -55,8 +77,8 @@ def affichage_clients(clients, canevas, direction=False):
 
 
 Murs_test = [Wall(0,0,0,200), Wall(0,200,300,200), Wall(300,200,300,0), Wall(300,0,0,0)]
-Entrees_test = Entry(0,100,0,150,45)
-Sorties_test = Exit(200,0,250,0)
+Entrees_test = [Entry(200,0,245,0,45)]
+Sorties_test = [Exit(0,100,0,150)]
 Meubles_test = [Stand(0,0,25,50), Stand(150,150,250,180)]
 Clients_test = [Client(45,78,3,4,6), Client(187,23,7,7,7)]
 
@@ -65,11 +87,15 @@ for wall in Murs_test:
     Shop_test.addWall(wall)
 for stand in Meubles_test:
     Shop_test.addStand(stand)
-Shop_test.updateEntry(Entrees_test)
-Shop_test.updateExit(Sorties_test)
+for entry in Entrees_test:
+    Shop_test.addEntry(entry)
+for exit in Sorties_test:
+    Shop_test.addExit(exit)
+for client in Clients_test:
+    Shop_test.addClient(client)
 
 
 creation_fenetre(Shop_test)
-affichage_magasin(Murs_test, Meubles_test, Entrees_test, Sorties_test, magasin)
-affichage_clients(Clients_test, magasin)
+affichage_magasin(Shop_test, magasin)
+affichage_clients(Shop_test, magasin)
 root.mainloop()
