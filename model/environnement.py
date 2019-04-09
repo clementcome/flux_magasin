@@ -23,12 +23,19 @@ class Wall:
     def getId(self):
         return self.id
 
+    def getNormal(self):
+        return
+
 
 class Stand:
     def __init__(self, x1, y1, x2, y2):
+        if x1<x2:
+            x1,x2 = x2,x1
+        if y1 < y2:
+            y1, y2 = y2, y1
         self.x1 = x1
-        self.y1 = y1
         self.x2 = x2
+        self.y1 = y1
         self.y2 = y2
         global idStand
         self.id = idStand
@@ -36,6 +43,11 @@ class Stand:
 
     def getPos(self):
         return [self.x1,self.y1,self.x2,self.y2]
+
+    def getPosHard(self): #position de la partie solide du meuble (se comporte comme un mur)
+        delta_x = (self.x2-self.x1)/4
+        delta_y = (self.y2-self.y1)/4
+        return [[self.x1+delta_x,self.y1+delta_y,self.x1+delta_x,self.y2-delta_y],[self.x1+delta_x,self.y1+delta_y,self.x2-delta_x,self.y1+delta_y],[self.x1+delta_x,self.y2-delta_y,self.x2-delta_x,self.y2-delta_y],[self.x2-delta_x,self.y1+delta_y,self.x2-delta_x,self.y2-delta_y]]
 
     def getCenter(self):
         return (self.x1 + self.x2) / 2, (self.y1 + self.y2) / 2
@@ -196,6 +208,7 @@ class Shop:
         for i in range(len(self.entries)):
             if self.entries[i].getId() == id:
                 self.entries.remove(i)
+    
     def removeExit(self,id):
         for i in range(len(self.exits)):
             if self.exits[i].getId() == id:
