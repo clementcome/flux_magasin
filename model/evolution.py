@@ -21,7 +21,7 @@ t = 0 #temps initial
 dt = 0.1 #On calcule toutes les dt secondes
 cnt = 0  #Initialisation du conteur
 cntReset = 10 #on affiche toutes les cnt*dt secondes
-T = 0.05 #durée de l'expérience
+T = 300 #durée de l'expérience
 
 ####
 
@@ -31,7 +31,12 @@ while t<T:
     if cnt == cntReset:
         cnt = 0
         ##afficher
-
+    for client in shop.getClients():
+        dv = dt*exteriorForces(client,shop)
+        pos = client.getPos()
+        speed = client.getSpeed()
+        client.setSpeed(speed+dv)
+        client.setPos(pos+dt*dv)
     #ajouter pour attendre dt
     t+=dt
     cnt+=1

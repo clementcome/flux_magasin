@@ -29,4 +29,16 @@ def intersectionHalf(xA,yA,xB,yB,xC,yC,xD,yD):#regarde si la demi-droite [A,B) e
     vect = mu*vect
     return intersectionSeg(xA,xB,xB+vect[0],yB+vect[1],xC,yC,xD,yD)
 
-print(intersectionHalf(1,1,3,1,-11,-1,-1,-8))
+def intersectPointLine(x,y,vect_norm,xA,yA,xB,yB):#on calcule la distance entre un point et une droite, en conaissant le vecteur perpendiculaire à cette droite
+    if (xB-xA)!=0 and vect_norm[0]!=0:
+        a1 = (yB-yA)/(xB-xA)#les coefficients des deux droites considérées (on calcule l'intersection de la droite AB et de la droite qui passe par M dirigée par le vecteur
+        b1 = yB-a1*xB
+        a2 = vect_norm[1]/vect_norm[0]
+        b2 = y-a2*x
+        return np.array([(b2 - b1) / (a1 - a2), a1 * ((b2 - b1) / (a1 - a2)) + b1])
+    elif (xB-xA)!=0:
+        return np.array([x,yA]) #dans ce cas yA=yB
+    elif vect_norm[0]!=0:
+        return np.array([xA,y]) #dans ce cas xA=xB
+    else:
+        raise Exception('Le mur donné est un point')

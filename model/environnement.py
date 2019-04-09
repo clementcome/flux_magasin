@@ -26,9 +26,25 @@ class Wall:
         return self.id
 
     def getNormal(self):
-        return np.array([1,-(self.x2-self.x1)/(self.y2-self.y1)])/norm(np.array([1,-(self.x2-self.x1)/(self.y2-self.y1)]))
+        if (self.y2-self.y1)!=0:
+            return np.array([1,-(self.x2-self.x1)/(self.y2-self.y1)])/norm(np.array([1,-(self.x2-self.x1)/(self.y2-self.y1)]))
+        else:
+            return np.array([0,1])
 
+class StandWall:
+    def __init__(self,x1, y1, x2, y2):
+        self.x1 = x1
+        self.y1 = y1
+        self.x2 = x2
+        self.y2 = y2
+    def getPos(self):
+        return [self.x1,self.y1,self.x2,self.y2]
 
+    def getNormal(self):
+        if (self.y2-self.y1)!=0:
+            return np.array([1,-(self.x2-self.x1)/(self.y2-self.y1)])/norm(np.array([1,-(self.x2-self.x1)/(self.y2-self.y1)]))
+        else:
+            return np.array([0,1])
 class Stand:
     def __init__(self, x1, y1, x2, y2):
         if x1<x2:
@@ -43,13 +59,18 @@ class Stand:
         self.id = idStand
         idStand+=1
 
+        delta_x = (self.x2 - self.x1) / 4
+        delta_y = (self.y2 - self.y1) / 4
+        self.standWalls = [StandWall(self.x1 + delta_x, self.y1 + delta_y, self.x1 + delta_x, self.y2 - delta_y),
+                           StandWall(self.x1 + delta_x, self.y1 + delta_y, self.x2 - delta_x, self.y1 + delta_y),
+                           StandWall(self.x1 + delta_x, self.y2 - delta_y, self.x2 - delta_x, self.y2 - delta_y),
+                           StandWall(self.x2 - delta_x, self.y1 + delta_y, self.x2 - delta_x, self.y2 - delta_y)]
+
     def getPos(self):
         return [self.x1,self.y1,self.x2,self.y2]
 
-    def getPosHard(self): #position de la partie solide du meuble (se comporte comme un mur)
-        delta_x = (self.x2-self.x1)/4
-        delta_y = (self.y2-self.y1)/4
-        return [[self.x1+delta_x,self.y1+delta_y,self.x1+delta_x,self.y2-delta_y],[self.x1+delta_x,self.y1+delta_y,self.x2-delta_x,self.y1+delta_y],[self.x1+delta_x,self.y2-delta_y,self.x2-delta_x,self.y2-delta_y],[self.x2-delta_x,self.y1+delta_y,self.x2-delta_x,self.y2-delta_y]]
+    def getStandWalls(self): #position de la partie solide du meuble (se comporte comme un mur)
+        return self.standWalls
 
     def getCenter(self):
         return (self.x1 + self.x2) / 2, (self.y1 + self.y2) / 2
@@ -62,6 +83,7 @@ class Stand:
             return False
     def getId(self):
         return self.id
+
 
 class Client:
     def __init__(self, x, y, v_x, v_y, tRemain, nbPurchased=0, nbRemain=None, attractCoef=None):
@@ -88,10 +110,10 @@ class Client:
             self.attract_coef = attractCoef
 
     def getPos(self):
-        return [self.x,self.y]
+        return np.array([self.x,self.y])
 
     def getSpeed(self):
-        return [self.v_x, self.v_y]
+        return np.array([self.v_x, self.v_y])
 
     def getTime(self):
         return self.t_remain
