@@ -6,6 +6,9 @@ F_0 = 1
 F_wall = 1
 d_0 = 1
 
+def F_wall(x):
+    return 1
+
 def lambd(x):
     return np.exp(-x**2)
 
@@ -26,9 +29,9 @@ def exteriorForces(client,shop,dt):
         dist = norm(intersect-np.array([client.getPos()[0],client.getPos()[1]]))
         wallCoef = wallCoef*(1-lambd(dist))
         if np.vdot(wall.getNormal(),np.array([client.getPos()[0],client.getPos()[1]])-intersect)>0:
-            wallForces = wallForces + lambd(dist)*F_wall*wall.getNormal() * ((norm(client.getSpeed())/dt)*2)
+            wallForces = wallForces + lambd(dist)*F_wall(dist)*wall.getNormal()
         else:
-            wallForces = wallForces - lambd(dist)*F_wall*wall.getNormal() * ((norm(client.getSpeed())/dt)*2)
+            wallForces = wallForces - lambd(dist)*F_wall(dist)*wall.getNormal()
 
     for stand in shop.getStands():
         for standWall in stand.getStandWalls():
@@ -37,7 +40,7 @@ def exteriorForces(client,shop,dt):
             dist = norm(intersect - np.array([client.getPos()[0], client.getPos()[1]]))
             wallCoef = wallCoef * (1 - lambd(dist))
             if np.vdot(standWall.getNormal(), np.array([client.getPos()[0], client.getPos()[1]]) - intersect) > 0:
-                wallForces = wallForces + lambd(dist) * F_wall * standWall.getNormal() * ((norm(client.getSpeed())/dt)*2)
+                wallForces = wallForces + lambd(dist) * F_wall(dist) * standWall.getNormal()
             else:
-                wallForces = wallForces - lambd(dist) * F_wall * standWall.getNormal() * ((norm(client.getSpeed())/dt)*2)
+                wallForces = wallForces - lambd(dist) * F_wall(dist) * standWall.getNormal()
     return wallCoef*forces + wallForces
