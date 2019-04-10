@@ -3,11 +3,11 @@ from flux_magasin.model.environnement import *
 from flux_magasin.model.intersections import intersectPointLine
 
 F_0 = 1
-F_wall = 1
+F_wall0 = 1
 d_0 = 5
 
 def F_wall(x):
-    return 1
+    return F_wall0*np.exp(1/x**3)
 
 def lambd(x):
     return np.exp(-x**0.4)

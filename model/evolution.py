@@ -1,49 +1,84 @@
-from flux_magasin.model.environnement import * #importé de cette façon et pas avec import flux_magasin.model.environnement, qui rendrait claque appel de mur illisible
+from flux_magasin.model.environnement import *
 from flux_magasin.model.forces import *
-import matplotlib.pyplot as plt
+from flux_magasin.model.intersections import *
+from flux_magasin.model.representation_graphique_statique import *
+import random as rd
+import time
 
 
+def representation_evolution(shop, dt, T):
+    t = 0
 
-####
+    #création fenêtre
+    root = Tk()
+    root.title('Magasin')
 
-#zones de visibilité
-####
+    murs = shop.getWalls()
 
-if __name__ == '__main__':
+    x_max = 0
+    y_max = 0
+    for mur in murs:
+        coord = mur.getPos()
+        if coord[0] > x_max:
+            x_max = coord[0]
+        if coord[2] > x_max:
+            x_max = coord[2]
+        if coord[1] > y_max:
+            y_max = coord[1]
+        if coord[3] > y_max:
+            y_max = coord[3]
 
-    shop = Shop("Zara")
+    magasin = Canvas(root, width=x_max+15, height=y_max+15)
+    magasin.pack()
 
-    walls = [Wall(0,0,0,200), Wall(0,200,300,200), Wall(300,200,300,0), Wall(300,0,0,0)]
-    stands = [Stand(0,0,25,50), Stand(150,150,250,180)]
-    clients = [Client(45,78,3,4,6), Client(187,23,7,7,7)]
+    #Afficher le magasin
+    affichage_magasin(shop, magasin)
+    #Afficher le point de départ des clients et récupérer la liste des clients
+    liste_boules = affichage_clients(shop, magasin)
 
-    for wall in walls:
-        shop.addWall(wall)
-    for stand in stands:
-        shop.addStand(stand)
-    for client in clients:
-        shop.addClient(client)
-    shop.addEntry(Entry(0,100,0,150,45))
-    shop.addExit(Exit(200,0,250,0))
 
-    t = 0 #temps initial
-    dt = 0.1 #On calcule toutes les dt secondes
-    cnt = 0  #Initialisation du conteur
-    cntReset = 10 #on affiche toutes les cnt*dt secondes
-    T = 300 #durée de l'expérience
-
-    while t<T:
-        if cnt == cntReset:
-            cnt = 0
-            ##afficher
+    while t < T:
+        #Calcul de la position suivante des clients
         for client in shop.getClients():
-            dv = dt*exteriorForces(client,shop)
+            dv = dt*exteriorForces(client, shop)
             pos = client.getPos()
             speed = client.getSpeed()
             client.setSpeed(speed+dv)
-            client.setPos(pos+dt*dv)
-        #ajouter pour attendre dt
+            client.setPos(pos+dt*speed+dt*dv)
+            #Déplacement des clients
+            magasin.move(liste_boules[client.getId()], speed[0], speed[1])
+            root.update()
+            time.sleep(.01)
         t += dt
-        cnt += 1
+    root.mainloop()
 
-    print(exteriorForces(shop.getClients()[0], shop))
+
+if __name__ == '__main__':
+    idWall = 0
+    idStand = 0
+    idClient = 0
+    idEntry = 0
+    idExit = 0
+    idShop = 0
+
+    Murs_test = [Wall(0,0,0,200), Wall(0,200,300,200), Wall(300,200,300,0), Wall(300,0,0,0)]
+    Entrees_test = [Entry(200,0,245,0,45), Entry(150,200,180,200,45)]
+    Sorties_test = [Exit(0,100,0,150), Exit(150,200,180,200)]
+    Meubles_test = [Stand(0,0,25,50), Stand(150,150,250,180)]
+    Clients_test = [Client(45,78,-0.4,0.8,6), Client(45,78,-0.4,0.8,6)]
+
+
+    Shop_test = Shop('test')
+    for wall in Murs_test:
+        Shop_test.addWall(wall)
+    for stand in Meubles_test:
+        Shop_test.addStand(stand)
+    for entry in Entrees_test:
+        Shop_test.addEntry(entry)
+    for exit in Sorties_test:
+        Shop_test.addExit(exit)
+    for client in Clients_test:
+        Shop_test.addClient(client)
+
+
+    representation_evolution(Shop_test, 1, 200)
