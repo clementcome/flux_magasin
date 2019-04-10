@@ -41,7 +41,7 @@ def representation_evolution(shop, dt, T):
     while t < T:
         #Calcul de la position suivante des clients
         for client in shop.getClients():
-            dv = dt*exteriorForces(client, shop)
+            dv = dt*exteriorForces(client, shop,dt)
             pos = client.getPos()
             speed = client.getSpeed()
             client.setSpeed(speed+dv)
@@ -66,7 +66,7 @@ Murs_test = [Wall(0,0,0,200), Wall(0,200,300,200), Wall(300,200,300,0), Wall(300
 Entrees_test = [Entry(200,0,245,0,45), Entry(150,200,180,200,45)]
 Sorties_test = [Exit(0,100,0,150), Exit(150,200,180,200)]
 Meubles_test = [Stand(0,0,25,50), Stand(150,150,250,180)]
-Clients_test = [Client(45,78,-0.2,0.4,6)]
+Clients_test = [Client(45,78,-0.2,0.4,6),Client(50,78,-0.2,0.4,6)]
 
 
 Shop_test = Shop('test')

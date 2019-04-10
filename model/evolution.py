@@ -32,7 +32,7 @@ while t<T:
         cnt = 0
         ##afficher
     for client in shop.getClients():
-        dv = dt*exteriorForces(client,shop)
+        dv = dt*exteriorForces(client,shop,dt)
         pos = client.getPos()
         speed = client.getSpeed()
         client.setSpeed(speed+dv)
@@ -42,4 +42,4 @@ while t<T:
     cnt += 1
 
 if __name__ == '__main__':
-    print(exteriorForces(shop.getClients()[0], shop))
+    print(exteriorForces(shop.getClients()[0], shop,dt))
