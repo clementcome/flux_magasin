@@ -41,46 +41,45 @@ def representation_evolution(shop, dt, T):
     while t < T:
         #Calcul de la position suivante des clients
         for client in shop.getClients():
-            dv = dt*exteriorForces(client, shop,dt)
+            dv = dt*exteriorForces(client, shop)
             pos = client.getPos()
             speed = client.getSpeed()
             client.setSpeed(speed+dv)
-            client.setPos(pos+dt*speed)
+            client.setPos(pos+dt*speed+dt*dv)
             #Déplacement des clients
-            magasin.move(liste_boules[client.getId()-2], speed[0], speed[1])
+            magasin.move(liste_boules[client.getId()], speed[0], speed[1])
             root.update()
             time.sleep(.01)
         t += dt
     root.mainloop()
 
 
-
-idWall = 0
-idStand = 0
-idClient = 0
-idEntry = 0
-idExit = 0
-idShop = 0
-
-Murs_test = [Wall(0,0,0,200), Wall(0,200,300,200), Wall(300,200,300,0), Wall(300,0,0,0)]
-Entrees_test = [Entry(200,0,245,0,45), Entry(150,200,180,200,45)]
-Sorties_test = [Exit(0,100,0,150), Exit(150,200,180,200)]
-Meubles_test = [Stand(0,0,25,50), Stand(150,150,250,180)]
-Clients_test = [Client(45,78,-0.2,0.4,6),Client(50,78,-0.2,0.4,6)]
-
-
-Shop_test = Shop('test')
-for wall in Murs_test:
-    Shop_test.addWall(wall)
-for stand in Meubles_test:
-    Shop_test.addStand(stand)
-for entry in Entrees_test:
-    Shop_test.addEntry(entry)
-for exit in Sorties_test:
-    Shop_test.addExit(exit)
-for client in Clients_test:
-    Shop_test.addClient(client)
-
-
 if __name__ == '__main__':
+    idWall = 0
+    idStand = 0
+    idClient = 0
+    idEntry = 0
+    idExit = 0
+    idShop = 0
+
+    Murs_test = [Wall(0,0,0,200), Wall(0,200,300,200), Wall(300,200,300,0), Wall(300,0,0,0)]
+    Entrees_test = [Entry(200,0,245,0,45), Entry(150,200,180,200,45)]
+    Sorties_test = [Exit(0,100,0,150), Exit(150,200,180,200)]
+    Meubles_test = [Stand(0,0,25,50), Stand(150,150,250,180)]
+    Clients_test = [Client(45,78,-0.4,0.8,6), Client(45,78,-0.4,0.8,6)]
+
+
+    Shop_test = Shop('test')
+    for wall in Murs_test:
+        Shop_test.addWall(wall)
+    for stand in Meubles_test:
+        Shop_test.addStand(stand)
+    for entry in Entrees_test:
+        Shop_test.addEntry(entry)
+    for exit in Sorties_test:
+        Shop_test.addExit(exit)
+    for client in Clients_test:
+        Shop_test.addClient(client)
+
+
     representation_evolution(Shop_test, 1, 200)
