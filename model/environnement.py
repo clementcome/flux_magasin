@@ -3,6 +3,7 @@ import numpy as np
 from flux_magasin.model.forces import *
 
 idWall = 0
+idStandWall = 0
 idStand = 0
 idClient = 0
 idEntry = 0
@@ -38,9 +39,13 @@ class StandWall:
         self.y1 = y1
         self.x2 = x2
         self.y2 = y2
+        global idStandWall
+        self.id = idStandWall
+        idStandWall +=1
     def getPos(self):
         return [self.x1,self.y1,self.x2,self.y2]
-
+    def getId(self):
+        return self.id
     def getNormal(self):
         if (self.y2-self.y1)!=0:
             return np.array([1,-(self.x2-self.x1)/(self.y2-self.y1)])/norm(np.array([1,-(self.x2-self.x1)/(self.y2-self.y1)]))
@@ -76,7 +81,7 @@ class Stand:
         return self.standWalls
 
     def getCenter(self):
-        return (self.x1 + self.x2) / 2, (self.y1 + self.y2) / 2
+        return np.array([(self.x1 + self.x2) / 2, (self.y1 + self.y2) / 2])
 
     def inside(self,pos): # on regarde si un point est dans le meuble (il faut implémenter un meuble intérieur (
         # probablement en rajoutant des murs) ou les gens ne peuvent pas rentrer
