@@ -42,7 +42,8 @@ def field_of_view(stand,shop): #pas fini
                     if wall.getId()!=point[2].getId():
                         if intersectionHalf(center[0],center[1],point[0][0],point[0][1],wall.getPos()[0],wall.getPos()[1],wall.getPos()[2],wall.getPos()[3]):
                             I = intersectPointLine(center[0],center[1],np.array([point[0][0],point[0][1]])-np.array([center[0],center[1]]),wall.getPos()[0],wall.getPos()[1],wall.getPos()[2],wall.getPos()[3])
-                            if dist> norm(I-np.array([center[0],center[1]])):
+                            if dist> norm(I-np.array([center[0],center[1]])) and np.dot(I-np.array(center[0],center[1]),np.array([point[0][0],point[0][1]])-np.array([center[0],center[1]]))>0:
+                                print(center, point, wall.getPos(),I)
                                 dist = norm(I-np.array([center[0],center[1]]))
                                 point_inter = I
                 for stand_test in shop.getStands():
@@ -50,7 +51,7 @@ def field_of_view(stand,shop): #pas fini
                         for stand_wall in stand_test.getStandWalls():
                             if intersectionHalf(center[0],center[1],point[0][0],point[0][1],stand_wall.getPos()[0],stand_wall.getPos()[1],stand_wall.getPos()[2],stand_wall.getPos()[3]):
                                 I = intersectPointLine(center[0],center[1],np.arrray([point[0][0],point[0][1]])-np.array([center[0],center[1]]),stand_wall.getPos()[0],stand_wall.getPos()[1],stand_wall.getPos()[2],stand_wall.getPos()[3])
-                                if dist>norm(I-np.array([center[0],center[1]])):
+                                if dist>norm(I-np.array([center[0],center[1]])) and np.dot(I-np.array(center[0],center[1]),np.array([point[0][0],point[0][1]])-np.array([center[0],center[1]]))>0:
                                     dist = norm(I-np.array([center[0],center[1]]))
                                     point_inter = I
         if point[1] == "stand":
@@ -75,10 +76,12 @@ def field_of_view(stand,shop): #pas fini
                                         dist = norm(I - np.array([center[0], center[1]]))
                                         point_inter = I
         if dist!= inf:
+            print(point_inter)
             other_points.append([point_inter,0,0])
+            magasin.create_oval(point[0][0] + 3, point[0][1] + 3, point[0][0] + 16, point[0][1] + 16, fill='yellow')
 
 
-    return poly+other_points
+    return poly +other_points
 
 def unobstructed_stand_wall(pointStand,pointWall,stand,wall,shop):#regarde si dans le magasin il y a une intersection entre le point sur stand et le point sur wall
     keep = True
