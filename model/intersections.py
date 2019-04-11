@@ -36,7 +36,8 @@ def intersectionHalf(xA, yA, xB, yB, xC, yC, xD,
                      yD):  # regarde si la demi-droite [A,B) et le segment [C,D] ont une intersection
     vect = np.array([xB - xA,
                      yB - yA])  # je me ramène au cas précédent déplaçant B par le vecteur AB mutliplié par un coefficient suffisamment grand (déterminé en fonction de la position des autres points)
-    mu = max(abs(xB / xC), abs(xB / xD), abs(yB / yC), abs(yB / yD))
+    #mu = max(abs(xB / xC), abs(xB / xD), abs(yB / yC), abs(yB / yD))
+    mu = sum([abs(i) for i in [xA, yA, xB, yB, xC, yC, xD,yD]])
     vect = mu * vect
     return intersectionSeg(xA, xB, xB + vect[0], yB + vect[1], xC, yC, xD, yD)
 
