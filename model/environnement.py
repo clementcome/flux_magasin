@@ -63,16 +63,16 @@ class Stand:
         self.x2 = x2
         self.y1 = y1
         self.y2 = y2
+
         global idStand
         self.id = idStand
-        idStand+=1
+        idStand += 1
 
-        delta_x = (self.x2 - self.x1) / 4
-        delta_y = (self.y2 - self.y1) / 4
-        self.standWalls = [StandWall(self.x1 + delta_x, self.y1 + delta_y, self.x1 + delta_x, self.y2 - delta_y),
-                           StandWall(self.x1 + delta_x, self.y1 + delta_y, self.x2 - delta_x, self.y1 + delta_y),
-                           StandWall(self.x1 + delta_x, self.y2 - delta_y, self.x2 - delta_x, self.y2 - delta_y),
-                           StandWall(self.x2 - delta_x, self.y1 + delta_y, self.x2 - delta_x, self.y2 - delta_y)]
+
+        self.standWalls = [StandWall(self.x1, self.y1, self.x1, self.y2),
+                           StandWall(self.x1 , self.y1 , self.x2 , self.y1 ),
+                           StandWall(self.x1 , self.y2 , self.x2 , self.y2),
+                           StandWall(self.x2, self.y1 , self.x2, self.y2)]
 
     def getPos(self):
         return [self.x1,self.y1,self.x2,self.y2]
