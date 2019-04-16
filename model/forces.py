@@ -4,13 +4,11 @@ from flux_magasin.model.intersections import intersectPointLine
 
 F_0 = 1
 F_wall0 = 10
-d_0 = 5
+d_0 = 1
 
-def F_wall(x):
-    return F_wall0*np.exp(1/x**3)
 
 def lambd(x):
-    return np.exp(-x**2)
+    return np.exp(-x**0.4)
 
 def norm(vect):
     return np.sqrt(vect[0]**2+vect[1]**2)
@@ -28,12 +26,10 @@ def exteriorForces(client,shop):
         intersect = intersectPointLine(client.getPos()[0],client.getPos()[1], wall.getNormal(), wall.getPos()[0], wall.getPos()[1], wall.getPos()[2], wall.getPos()[3])
         dist = norm(intersect-np.array([client.getPos()[0],client.getPos()[1]]))
         wallCoef = wallCoef*(1-lambd(dist))
-        if lambd(dist)>0.5:
-            print('lambda wall', lambd(dist))
         if np.vdot(wall.getNormal(),np.array([client.getPos()[0],client.getPos()[1]])-intersect)>0:
-            wallForces = wallForces + lambd(dist)*F_wall(dist)*wall.getNormal()
+            wallForces = wallForces + lambd(dist)*F_wall0*wall.getNormal()
         else:
-            wallForces = wallForces - lambd(dist)*F_wall(dist)*wall.getNormal()
+            wallForces = wallForces - lambd(dist)*F_wall0*wall.getNormal()
 
     for stand in shop.getStands():
         for standWall in stand.getStandWalls():
@@ -41,10 +37,8 @@ def exteriorForces(client,shop):
                                            standWall.getPos()[1], standWall.getPos()[2], standWall.getPos()[3])
             dist = norm(intersect - np.array([client.getPos()[0], client.getPos()[1]]))
             wallCoef = wallCoef * (1 - lambd(dist))
-            if lambd(dist) > 0.5:
-                print('lambda stand', lambd(dist))
             if np.vdot(standWall.getNormal(), np.array([client.getPos()[0], client.getPos()[1]]) - intersect) > 0:
-                wallForces = wallForces + lambd(dist) * F_wall(dist) * standWall.getNormal()
+                wallForces = wallForces + lambd(dist) * F_wall0 * standWall.getNormal()/4
             else:
-                wallForces = wallForces - lambd(dist) * F_wall(dist) * standWall.getNormal()
+                wallForces = wallForces - lambd(dist) * F_wall0 * standWall.getNormal()/4
     return wallCoef*forces + wallForces
