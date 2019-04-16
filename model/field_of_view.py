@@ -189,7 +189,7 @@ if __name__ == '__main__':
     Murs_test = [Wall(0,0,0,200), Wall(0,200,300,200), Wall(300,200,300,0), Wall(300,0,0,0)]
     Entrees_test = [Entry(200,0,245,0,45), Entry(150,200,180,200,45)]
     Sorties_test = [Exit(0,100,0,150), Exit(150,200,180,200)]
-    Meubles_test = [Stand(0,0,25,50), Stand(150,150,250,180)]
+    Meubles_test = [Stand(0,0,25,50), Stand(150,150,250,180),Stand(100,100,170,140)]
     Clients_test = [Client(45,78,3,4,6), Client(187,23,7,7,7)]
 
 
@@ -210,7 +210,7 @@ if __name__ == '__main__':
     creation_fenetre_fov(Shop_test)
     affichage_magasin(Shop_test, magasin)
 
-    points = field_of_view(Shop_test.getStands()[0], Shop_test)
+    points = field_of_view(Shop_test.getStands()[2], Shop_test)
     for point in points:
         magasin.create_oval(point[0][0] + 5, point[0][1] + 5, point[0][0] + 15, point[0][1] + 15, fill='green')
 
