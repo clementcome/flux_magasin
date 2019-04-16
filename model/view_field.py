@@ -4,7 +4,7 @@ from flux_magasin.model.representation_graphique_statique import *
 from math import inf
 from flux_magasin.model.forces import *
 
-def field_of_view(stand,shop):
+def view_field(stand, shop):
     center = stand.getCenter()
     poly = []
     for wall in shop.getWalls(): #on parcours tous les points d'intérêts des murs
@@ -210,7 +210,7 @@ if __name__ == '__main__':
     creation_fenetre_fov(Shop_test)
     affichage_magasin(Shop_test, magasin)
 
-    points = field_of_view(Shop_test.getStands()[2], Shop_test)
+    points = view_field(Shop_test.getStands()[0], Shop_test)
     for point in points:
         magasin.create_oval(point[0][0] + 5, point[0][1] + 5, point[0][0] + 15, point[0][1] + 15, fill='green')
 

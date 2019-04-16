@@ -6,8 +6,6 @@ F_0 = 1
 F_wall0 = 10
 d_0 = 5
 
-def F_wall(x):
-    return F_wall0*(1/x**3)
 
 def lambd(x):
     return np.exp(-x**0.4)
@@ -42,6 +40,6 @@ def exteriorForces(client,shop):
             if np.vdot(standWall.getNormal(), np.array([client.getPos()[0], client.getPos()[1]]) - intersect) > 0:
                 wallForces = wallForces + lambd(dist) * F_wall0 * (standWall.getNormal()/4)
             else:
-                wallForces = wallForces - lambd(dist) * F_wall0 * (standWall.getNormal())/4
+                wallForces = wallForces - lambd(dist) * F_wall0 * (standWall.getNormal()/4)
 
     return wallCoef*forces + wallForces
