@@ -6,8 +6,6 @@ F_0 = 1
 F_wall0 = 10
 d_0 = 1
 
-def F_wall(x):
-    return F_wall0*np.exp(1/x**3)
 
 def lambd(x):
     return np.exp(-x**0.4)
