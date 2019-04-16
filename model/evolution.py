@@ -47,7 +47,8 @@ def representation_evolution(shop, dt, T):
                 client.setSpeed(speed + dv)
             else:
                 client.setSpeed(((speed + dv)/norm(speed + dv))*v_max)
-            client.setPos(pos+dt*speed)
+            #print(norm(speed))
+            client.setPos(pos+dt*speed+dt*dv)
             #Déplacement des clients
             magasin.move(liste_boules[client.getId()], speed[0], speed[1])
             root.update()
@@ -58,14 +59,14 @@ def representation_evolution(shop, dt, T):
 
 if __name__ == '__main__':
 
-    T = 300
+    T = 2000
     v_max = 4
 
     Murs_test = [Wall(0,0,0,200), Wall(0,200,300,200), Wall(300,200,300,0), Wall(300,0,0,0)]
     Entrees_test = [Entry(200,0,245,0,45), Entry(150,200,180,200,45)]
     Sorties_test = [Exit(0,100,0,150), Exit(150,200,180,200)]
     Meubles_test = [Stand(0,0,25,50), Stand(150,150,250,180)]
-    Clients_test = [Client(45,78,-0.4,3,6), Client(45,78,-0.5,0.8,6)]
+    Clients_test = [Client(200,78,0.8,0.8,6), Client(45,78,-0.9,0.8,6)]
 
 
     Shop_test = Shop('test')
