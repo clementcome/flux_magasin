@@ -138,3 +138,6 @@ if __name__ == '__main__':
 
     creation_legende()
 
+
+def stop(root):
+    root.destroy()
