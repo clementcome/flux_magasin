@@ -1,6 +1,7 @@
 from tkinter import *
 from flux_magasin.model.environnement import *
 
+
 def creation_fenetre(shop):
     global root
     root = Tk()
@@ -24,6 +25,7 @@ def creation_fenetre(shop):
     global magasin
     magasin = Canvas(root, width=x_max+15, height=y_max+15)
     magasin.pack()
+
 
 def creation_legende():
     window = Tk()
@@ -55,6 +57,7 @@ def creation_legende():
     canvas.create_text(110, 225, text='Client')
 
     window.mainloop()
+
 
 def affichage_magasin(shop, canevas):
 
@@ -95,6 +98,7 @@ def affichage_magasin(shop, canevas):
             for i in range(5,15):
                 canevas.create_line(coord[0]+13, coord[1]+i, coord[2]+10, coord[3]+i, width=1, fill='red', dash=(1,1))
 
+
 def affichage_clients(shop, canevas, direction=False):
 
     clients = shop.getClients()
@@ -106,8 +110,6 @@ def affichage_clients(shop, canevas, direction=False):
             vitesse = client.getSpeed()
             canevas.create_line(coord[0]+10, coord[1]+10, coord[0]+5*vitesse[0]+10, coord[1]+5*vitesse[1]+10, fill='green', arrow='last')
     return liste_boules
-
-
 
 
 if __name__ == '__main__':
@@ -130,11 +132,9 @@ if __name__ == '__main__':
     for client in Clients_test:
         Shop_test.addClient(client)
 
-
     creation_fenetre(Shop_test)
     affichage_magasin(Shop_test, magasin)
     affichage_clients(Shop_test, magasin)
     root.mainloop()
 
     creation_legende()
-

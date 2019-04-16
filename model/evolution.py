@@ -36,7 +36,7 @@ def representation_evolution(shop, dt, T):
     #Afficher le point de départ des clients et récupérer la liste des clients
     liste_boules = affichage_clients(shop, magasin)
 
-
+    i = 0
     while t < T:
         #Calcul de la position suivante des clients
         for client in shop.getClients():
@@ -52,6 +52,8 @@ def representation_evolution(shop, dt, T):
             #Déplacement des clients
             magasin.move(liste_boules[client.getId()], speed[0], speed[1])
             root.update()
+            magasin.postscript(file="image{}.ps".format(i), colormode='color')
+            i += 1
             time.sleep(.01)
         t += dt
     root.mainloop()
