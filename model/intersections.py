@@ -1,12 +1,11 @@
 import numpy as np
+from model.utils import norm
 
 class Point:
     def __init__(self, x, y):
         self.x = x
         self.y = y
 
-def norm(vect):
-    return np.sqrt(vect[0]**2+vect[1]**2)
 
 def counterclockwise(A, B, C):  # regarde si les les points A B et C sont ordonnées dans le sens trigonométrique
     return (C.y - A.y) * (B.x - A.x) > (B.y - A.y) * (C.x - A.x)

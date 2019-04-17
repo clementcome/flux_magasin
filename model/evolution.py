@@ -1,7 +1,8 @@
-from flux_magasin.model.environnement import *
-from flux_magasin.model.forces import *
-from flux_magasin.model.intersections import *
-from flux_magasin.model.representation_graphique_statique import *
+from model.environnement import Wall,StandWall,Shop,Stand,Client,Entry,Exit
+from model.forces import exteriorForces
+from model.representation_graphique_statique import affichage_magasin, affichage_clients
+from model.utils import norm
+from tkinter import Tk, Canvas
 import random as rd
 import time
 

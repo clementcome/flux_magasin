@@ -1,8 +1,10 @@
-from flux_magasin.model.environnement import *
-from flux_magasin.model.intersections import *
-from flux_magasin.model.representation_graphique_statique import *
+from model.environnement import Wall,StandWall,Shop,Stand,Client,Entry,Exit
+from model.intersections import intersectionHalf,intersectPointLine, intersectionSeg
+from model.representation_graphique_statique import affichage_magasin
+from model.utils import norm
+import numpy as np
+from tkinter import Tk, Canvas
 from math import inf
-from flux_magasin.model.forces import *
 
 def view_field(stand, shop):
     center = stand.getCenter()
@@ -83,7 +85,7 @@ def view_field(stand, shop):
                     if stand_test.getId()!= stand.getId():
                         for stand_wall in stand_test.getStandWalls():
                             if intersectionHalf(center[0],center[1],point[0][0],point[0][1],stand_wall.getPos()[0],stand_wall.getPos()[1],stand_wall.getPos()[2],stand_wall.getPos()[3]):
-                                I = intersectPointLine(center[0],center[1],np.arrray([point[0][0],point[0][1]])-np.array([center[0],center[1]]),stand_wall.getPos()[0],stand_wall.getPos()[1],stand_wall.getPos()[2],stand_wall.getPos()[3])
+                                I = intersectPointLine(center[0],center[1],np.array([point[0][0],point[0][1]])-np.array([center[0],center[1]]),stand_wall.getPos()[0],stand_wall.getPos()[1],stand_wall.getPos()[2],stand_wall.getPos()[3])
                                 if dist>norm(I-np.array([center[0],center[1]])) and np.dot(I-np.array(center[0],center[1]),np.array([point[0][0],point[0][1]])-np.array([center[0],center[1]]))>0:
                                     dist = norm(I-np.array([center[0],center[1]]))
                                     point_inter = I
@@ -100,7 +102,7 @@ def view_field(stand, shop):
                         for stand_wall in stand_test.getStandWalls():
                             if not point_on_stand_wall(point[0],stand_wall):
                                 if intersectionHalf(center[0],center[1],point[0][0],point[0][1],stand_wall.getPos()[0],stand_wall.getPos()[1],stand_wall.getPos()[2],stand_wall.getPos()[3]):
-                                    I = intersectPointLine(center[0],center[1],np.arrray([point[0][0],point[0][1]])-np.array([center[0],center[1]]),stand_wall.getPos()[0],stand_wall.getPos()[1],stand_wall.getPos()[2],stand_wall.getPos()[3])
+                                    I = intersectPointLine(center[0],center[1],np.array([point[0][0],point[0][1]])-np.array([center[0],center[1]]),stand_wall.getPos()[0],stand_wall.getPos()[1],stand_wall.getPos()[2],stand_wall.getPos()[3])
                                     if dist > norm(I - np.array([center[0], center[1]])) and np.dot(I-np.array(center[0],center[1]),np.array([point[0][0],point[0][1]])-np.array([center[0],center[1]]))>0:
                                         dist = norm(I - np.array([center[0], center[1]]))
                                         point_inter = I
