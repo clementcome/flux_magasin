@@ -212,9 +212,11 @@ if __name__ == '__main__':
     creation_fenetre_fov(Shop_test)
     affichage_magasin(Shop_test, magasin)
 
-    points = view_field(Shop_test.getStands()[0], Shop_test)
+    i = 0
+    points = view_field(Shop_test.getStands()[i], Shop_test)
+    magasin.create_oval(Shop_test.getStands()[i].getCenter()[0] + 5, Shop_test.getStands()[i].getCenter()[1] + 5, Shop_test.getStands()[i].getCenter()[0] + 20, Shop_test.getStands()[i].getCenter()[1] + 20, fill='pink')
     for point in points:
-        magasin.create_oval(point[0][0] + 5, point[0][1] + 5, point[0][0] + 15, point[0][1] + 15, fill='green')
+        magasin.create_oval(point[0][0] + 5, point[0][1] + 5, point[0][0] + 15, point[0][1] + 15, fill='cyan')
 
 
     root.mainloop()

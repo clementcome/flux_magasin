@@ -216,19 +216,34 @@ class Shop:
         return len(self.clients)
 
     def addWall(self,wall):
-        self.walls.append(wall)
+        if type(wall) == list:
+            self.walls = self.walls + wall
+        else:
+            self.walls.append(wall)
 
     def addStand(self,stand):
-        self.stands.append(stand)
+        if type(stand) == list:
+            self.stands = self.stands + stand
+        else:
+            self.stands.append(stand)
 
     def addClient(self,client):
-        self.clients.append(client)
+        if type(client) == list:
+            self.clients = self.clients + client
+        else:
+            self.clients.append(client)
 
     def addEntry(self,entry):
-        self.entries.append(entry)
+        if type(entry) == list:
+            self.entries = self.entries + entry
+        else:
+            self.entries.append(entry)
 
     def addExit(self,exit):
-        self.exits.append(exit)
+        if type(exit) == list:
+            self.exits = self.exits + exit
+        else:
+            self.exits.append(exit)
 
     def removeEntry(self,id):
         for i in range(len(self.entries)):
