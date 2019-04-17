@@ -4,8 +4,8 @@ from model.intersections import intersectPointLine,intersectionSegDroite
 
 F_exit = 1
 
-def lambd(x):
-    return np.exp(-x**0.4)
+# def lambd(x):
+#     return np.exp(-x**0.3)
 
 def norm(vect):
     return np.sqrt(vect[0]**2+vect[1]**2)
