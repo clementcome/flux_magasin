@@ -2,16 +2,26 @@ import numpy as np
 from flux_magasin.model.environnement import *
 from flux_magasin.model.intersections import intersectPointLine
 
+F_exit = 1
+
 def lambd(x):
     return np.exp(-x**0.4)
 
 def norm(vect):
     return np.sqrt(vect[0]**2+vect[1]**2)
 
+def exitForce(client,exit):
+    xForce = (exit.x1+exit.x2)/2 -client.x
+    yForce = (exit.y1+exit.y2)/2 -client.y
+    vecClientMur = np.array([xForce,yForce])
+    vecForce = F_exit*vecClientMur/norm(vecClientMur)
+    return vecForce
+
 def exteriorForces(client,shop,lambd,d_0,F_wall0,F_stand0,F_0):
     forces = np.zeros(2)
     wallForces = np.zeros(2)
     wallCoef = 1
+    exitForces = np.zeros(2)
 
     for otherClient in shop.getClients():
         if otherClient.getId()!= client.getId():
@@ -36,4 +46,7 @@ def exteriorForces(client,shop,lambd,d_0,F_wall0,F_stand0,F_0):
                 wallForces = wallForces + lambd(dist) * F_stand0 * standWall.getNormal()
             else:
                 wallForces = wallForces - lambd(dist) * F_stand0 * standWall.getNormal()
-    return wallCoef*forces + wallForces
+
+    for exit in shop.exits:
+        exitForces += exitForce(client,exit)
+    return wallCoef*(forces + exitForces) + wallForces

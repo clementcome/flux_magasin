@@ -19,13 +19,9 @@ print(type(Clients_test))
 shop = Shop('test')
 
 shop.addWall(Murs_test)
-for stand in Meubles_test:
-    shop.addStand(stand)
-for entry in Entrees_test:
-    shop.addEntry(entry)
-for exit in Sorties_test:
-    shop.addExit(exit)
-for client in Clients_test:
-    shop.addClient(client)
+shop.addStand(Meubles_test)
+shop.addEntry(Entrees_test)
+shop.addExit(Sorties_test)
+shop.addClient(Clients_test)
 
 print(evolution_list(shop,T, dt,lambd,d_0,F_wall0,F_stand0,F_0, v_max))

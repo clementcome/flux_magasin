@@ -104,15 +104,10 @@ if __name__ == '__main__':
 
 
     Shop_test = Shop('test')
-    for wall in Murs_test:
-        Shop_test.addWall(wall)
-    for stand in Meubles_test:
-        Shop_test.addStand(stand)
-    for entry in Entrees_test:
-        Shop_test.addEntry(entry)
-    for exit in Sorties_test:
-        Shop_test.addExit(exit)
-    for client in Clients_test:
-        Shop_test.addClient(client)
+    Shop_test.addWall(Murs_test)
+    Shop_test.addStand(Meubles_test)
+    Shop_test.addEntry(Entrees_test)
+    Shop_test.addExit(Sorties_test)
+    Shop_test.addClient(Clients_test)
 
     representation_evolution(Shop_test, 1, T)
