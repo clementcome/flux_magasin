@@ -1,10 +1,11 @@
-from model.environnement import Wall,StandWall,Shop,Stand,Client,Entry,Exit
-from model.forces import exteriorForces
-from model.representation_graphique_statique import affichage_magasin, affichage_clients
-from model.utils import norm
+from environnement import Wall,StandWall,Shop,Stand,Client,Entry,Exit
+# from forces import exteriorForces
+from representation_graphique_statique import affichage_magasin, affichage_clients
+from utils import norm
 from tkinter import Tk, Canvas
 import random as rd
 import time
+from forces import exteriorForces
 
 
 def representation_evolution(shop, dt, T):
@@ -53,7 +54,7 @@ def representation_evolution(shop, dt, T):
             #Déplacement des clients
             magasin.move(liste_boules[client.getId()], speed[0], speed[1])
             root.update()
-            magasin.postscript(file="image{}.ps".format(i), colormode='color')
+            #magasin.postscript(file="image{}.ps".format(i), colormode='color')
             i += 1
             time.sleep(.01)
         t += dt
