@@ -11,6 +11,12 @@ import time
 
 
 def representation_evolution(shop, dt, T):
+    '''
+    Fonction that displays and computes the evolution of the system
+    :param shop: (Shop) The shop considered
+    :param dt: (float) Time step
+    :param T: (float) Time frame considered
+    '''
     t = 0
     F_0 = 10
     F_wall0 = 400
@@ -73,7 +79,21 @@ def representation_evolution(shop, dt, T):
         t += dt
     root.mainloop()
 
-def evolution_list(shop,T, dt,lambd,d_0,F_wall0,F_stand0,F_0, v_max):
+def evolution_list(shop,T, dt,lambd,d_0,F_wall0,F_stand0,F_0, v_max, F_exit):
+    '''
+    Fonction that computes the evolution of the system and returns the trajectories of the clients
+    :param shop: (Shop) Shop considered
+    :param T: (float) Time frame considered
+    :param dt: (float) Time step
+    :param lambd: (function) Fuction that caracterises the repultion of the walls
+    :param d_0: (float) Diameter of a person
+    :param F_wall0: (float) Module of the forces exerted by the walls
+    :param F_stand0: (float) Module of the forces exerted by the stands
+    :param F_0: (float) Coefficient applied to the social force
+    :param v_max: (float) Module of the maximum speed of the client
+    :param F_exit: (float) Coefficient applied to the force linked with the exit
+    :return: (list) List of the positions of all the clients over time
+    '''
     t = 0
     syst = {}
     for client in shop.getClients():
@@ -84,7 +104,7 @@ def evolution_list(shop,T, dt,lambd,d_0,F_wall0,F_stand0,F_0, v_max):
         for client in shop.getClients():
             syst[client.getId()] = syst[client.getId()] + [client.getPos()[0],client.getPos()[1]]
 
-            dv = dt*exteriorForces(client,shop,lambd,d_0,F_wall0,F_stand0,F_0)
+            dv = dt*exteriorForces(client,shop,lambd,d_0,F_wall0,F_stand0,F_0, F_exit)
             pos = client.getPos()
             speed = client.getSpeed()
             if norm(speed+dv)<v_max:

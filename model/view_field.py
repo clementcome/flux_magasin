@@ -7,6 +7,12 @@ from tkinter import Tk, Canvas
 from math import inf
 
 def view_field(stand, shop):
+    '''
+    Returns the view field of the stand inside the shop
+    :param stand: (Stand) Stand considered
+    :param shop: (Shop) Shop considered
+    :return: (list) Polygone representing the view field
+    '''
     center = stand.getCenter()
     poly = []
     for wall in shop.getWalls(): #on parcours tous les points d'intérêts des murs

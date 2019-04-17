@@ -3,19 +3,17 @@ from model.environnement import Wall,StandWall,Shop,Stand,Client,Entry,Exit
 from model.intersections import intersectPointLine, intersectionSegDroite
 from model.utils import norm
 
-F_exit = 1
-
 # def lambd(x):
 #     return np.exp(-x**0.3)
 
-def exitForce(client,exit):
+def exitForce(client,exit, F_exit):
     xForce = (exit.x1+exit.x2)/2 -client.x
     yForce = (exit.y1+exit.y2)/2 -client.y
     vecClientMur = np.array([xForce,yForce])
     vecForce = F_exit*vecClientMur/norm(vecClientMur)
     return vecForce
 
-def exteriorForces(client,shop,lambd,d_0,F_wall0,F_stand0,F_0):
+def exteriorForces(client,shop,lambd,d_0,F_wall0,F_stand0,F_0, F_exit):
     forces = np.zeros(2)
     wallForces = np.zeros(2)
     wallCoef = 1
@@ -49,5 +47,5 @@ def exteriorForces(client,shop,lambd,d_0,F_wall0,F_stand0,F_0):
                     wallForces = wallForces - lambd(dist) * F_stand0 * standWall.getNormal()
 
     for exit in shop.exits:
-        exitForces += exitForce(client,exit)
+        exitForces += exitForce(client,exit, F_exit)
     return wallCoef*(forces + exitForces) + wallForces

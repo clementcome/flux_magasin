@@ -7,6 +7,8 @@ F_wall0 = 15
 d_0 = 1
 F_stand0 = F_wall0 / 4
 dt = 1
+F_exit = 1
+
 
 Murs_test = [Wall(0,0,0,200), Wall(0,200,300,200), Wall(300,200,300,0), Wall(300,0,0,0)]
 Entrees_test = [Entry(200,0,245,0,45), Entry(150,200,180,200,45)]
@@ -24,4 +26,4 @@ shop.addEntry(Entrees_test)
 shop.addExit(Sorties_test)
 shop.addClient(Clients_test)
 
-print(evolution_list(shop,T, dt,lambd,d_0,F_wall0,F_stand0,F_0, v_max))
+print(evolution_list(shop,T, dt,lambd,d_0,F_wall0,F_stand0,F_0, v_max,F_exit))
