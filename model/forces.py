@@ -5,6 +5,7 @@ from flux_magasin.model.intersections import intersectPointLine
 F_0 = 1
 F_wall0 = 10
 d_0 = 1
+F_exit = 1
 
 
 def lambd(x):
@@ -13,10 +14,18 @@ def lambd(x):
 def norm(vect):
     return np.sqrt(vect[0]**2+vect[1]**2)
 
+def exitForce(client,exit):
+    xForce = (exit.x1+exit.x2)/2 -client.x
+    yForce = (exit.y1+exit.y2)/2 -client.y
+    vecClientMur = np.array([xForce,yForce])
+    vecForce = F_exit*vecClientMur/norm(vecClientMur)
+    return vecForce
+
 def exteriorForces(client,shop):
     forces = np.zeros(2)
     wallForces = np.zeros(2)
     wallCoef = 1
+    exitForces = np.zeros(2)
 
     for otherClient in shop.getClients():
         if otherClient.getId()!= client.getId():
@@ -41,4 +50,7 @@ def exteriorForces(client,shop):
                 wallForces = wallForces + lambd(dist) * F_wall0 * standWall.getNormal()/4
             else:
                 wallForces = wallForces - lambd(dist) * F_wall0 * standWall.getNormal()/4
-    return wallCoef*forces + wallForces
+
+    for exit in shop.exits:
+        exitForces += exitForce(client,exit)
+    return wallCoef*forces + wallForces + exitClient
