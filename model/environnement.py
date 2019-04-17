@@ -216,7 +216,10 @@ class Shop:
         return len(self.clients)
 
     def addWall(self,wall):
-        self.walls.append(wall)
+        if type(wall) == list:
+            self.walls = self.walls + wall
+        else:
+            self.walls.append(wall)
 
     def addStand(self,stand):
         self.stands.append(stand)
