@@ -1,7 +1,7 @@
 import numpy as np
-from environnement import Wall,StandWall,Shop,Stand,Client,Entry,Exit
-from intersections import intersectPointLine
-from utils import norm
+from model.environnement import Wall,StandWall,Shop,Stand,Client,Entry,Exit
+from model.intersections import intersectPointLine, intersectionSegDroite
+from model.utils import norm
 
 F_exit = 1
 

@@ -1,7 +1,7 @@
-from environnement import Wall,StandWall,Shop,Stand,Client,Entry,Exit
-from intersections import intersectionHalf,intersectPointLine, intersectionSeg
-from representation_graphique_statique import affichage_magasin
-from utils import norm
+from model.environnement import Wall,StandWall,Shop,Stand,Client,Entry,Exit
+from model.intersections import intersectionHalf,intersectPointLine, intersectionSeg
+from model.representation_graphique_statique import affichage_magasin
+from model.utils import norm
 import numpy as np
 from tkinter import Tk, Canvas
 from math import inf

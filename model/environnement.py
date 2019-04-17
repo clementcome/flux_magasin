@@ -1,6 +1,6 @@
 from math import inf
 import numpy as np
-from utils import norm
+from model.utils import norm
 
 idWall = 0
 idStandWall = 0

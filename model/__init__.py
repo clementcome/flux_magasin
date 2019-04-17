@@ -1,4 +1,4 @@
-from model.environnement import *
+from model.environnement import Wall,StandWall,Shop,Stand,Client,Entry,Exit
 
 def builder(list,flux):
     shop = Shop("Magasin")
@@ -18,3 +18,5 @@ def builder(list,flux):
             shop.addExit(Exit(list[i][0], list[i][1], list[i + 2][0], list[i + 2][1]))
             i += 2
     return shop
+
+from model.evolution import representation_evolution, evolution_list

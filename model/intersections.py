@@ -1,5 +1,5 @@
 import numpy as np
-from utils import norm
+from model.utils import norm
 
 class Point:
     def __init__(self, x, y):
