@@ -1,6 +1,6 @@
 import numpy as np
-from flux_magasin.model.environnement import *
-from flux_magasin.model.intersections import intersectPointLine
+from model.environnement import *
+from model.intersections import intersectPointLine
 
 F_exit = 1
 

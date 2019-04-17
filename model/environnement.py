@@ -1,6 +1,6 @@
 from math import inf
 import numpy as np
-from flux_magasin.model.forces import *
+from model.forces import *
 
 idWall = 0
 idStandWall = 0

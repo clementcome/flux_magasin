@@ -1,5 +1,5 @@
 from tkinter import *
-from flux_magasin.model.environnement import *
+from model.environnement import *
 
 def creation_fenetre(shop):
     global root
