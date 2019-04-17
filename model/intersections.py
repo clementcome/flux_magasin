@@ -31,8 +31,7 @@ def intersectionSeg(xA, yA, xB, yB, xC, yC, xD,
     return counterclockwise(A, C, D) != counterclockwise(B, C, D) and counterclockwise(A, B, C) != counterclockwise(A,B,D)
 
 
-def intersectionHalf(xA, yA, xB, yB, xC, yC, xD,
-                     yD):  # regarde si la demi-droite [A,B) et le segment [C,D] ont une intersection
+def intersectionHalf(xA, yA, xB, yB, xC, yC, xD,yD):  # regarde si la demi-droite [A,B) et le segment [C,D] ont une intersection
     vect = np.array([xB - xA,
                      yB - yA])  # je me ramène au cas précédent déplaçant B par le vecteur AB mutliplié par un coefficient suffisamment grand (déterminé en fonction de la position des autres points)
     #mu = max(abs(xB / xC), abs(xB / xD), abs(yB / yC), abs(yB / yD))
@@ -40,6 +39,12 @@ def intersectionHalf(xA, yA, xB, yB, xC, yC, xD,
     vect = vect / norm(vect)
     vect = mu * vect
     return intersectionSeg(xA, yA, xB + vect[0], yB + vect[1], xC, yC, xD, yD)
+
+def intersectionSegDroite(xA, yA, xB, yB, x, y, vect_norm):
+    mu = np.sqrt(sum([abs(i) for i in [xA,xB,x]])**2+sum([abs(i) for i in [yA,yB,y]])**2)
+    vect = (mu * vect_norm)/norm(vect_norm)
+    return intersectionSeg(xA,yA,xB,yB,x-vect[0],y-vect[0],x+vect[0],y+vect[0])
+
 
 
 def intersectPointLine(x, y, vect_norm, xA, yA, xB, yB):  # on calcule la distance entre un point et une droite, en connaissant le vecteur perpendiculaire à cette droite
