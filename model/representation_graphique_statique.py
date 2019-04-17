@@ -1,5 +1,5 @@
-from tkinter import *
-from model.environnement import *
+from tkinter import Tk, Canvas
+from model.environnement import Wall,StandWall,Shop,Stand,Client,Entry,Exit
 
 def creation_fenetre(shop):
     global root

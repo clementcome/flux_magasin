@@ -1,14 +1,12 @@
 import numpy as np
-from model.environnement import *
-from model.intersections import intersectPointLine,intersectionSegDroite
+from model.environnement import Wall,StandWall,Shop,Stand,Client,Entry,Exit
+from model.intersections import intersectPointLine, intersectionSegDroite
+from model.utils import norm
 
 F_exit = 1
 
 # def lambd(x):
 #     return np.exp(-x**0.3)
-
-def norm(vect):
-    return np.sqrt(vect[0]**2+vect[1]**2)
 
 def exitForce(client,exit):
     xForce = (exit.x1+exit.x2)/2 -client.x

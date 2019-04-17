@@ -1,4 +1,5 @@
 import numpy as np
+from model.utils import norm
 
 class Point:
     def __init__(self, x, y):
@@ -18,7 +19,7 @@ def norm(vect):
     '''
     return np.sqrt(vect[0]**2+vect[1]**2)
 
-def counterclockwise(A, B, C):  # regarde si les les points A B et C sont ordonnées dans le sens trigonométrique
+def counterclockwise(A, B, C):
     '''
     Checks if A, B and C are in trigonometrical order
     :param A: Point A (from class point)
@@ -69,7 +70,7 @@ def intersectionSeg(xA, yA, xB, yB, xC, yC, xD, yD):
     return counterclockwise(A, C, D) != counterclockwise(B, C, D) and counterclockwise(A, B, C) != counterclockwise(A,B,D)
 
 
-def intersectionHalf(xA, yA, xB, yB, xC, yC, xD,yD):  # regarde si la demi-droite [A,B) et le segment [C,D] ont une intersection
+def intersectionHalf(xA, yA, xB, yB, xC, yC, xD,yD):
     '''
     Checks if the infinite half strait line that goes from A to B intersects the segment [C,D]
     :param xA: (float) Coordonnates on Ox of the point A
@@ -90,13 +91,35 @@ def intersectionHalf(xA, yA, xB, yB, xC, yC, xD,yD):  # regarde si la demi-droit
     return intersectionSeg(xA, yA, xB + vect[0], yB + vect[1], xC, yC, xD, yD)
 
 def intersectionSegDroite(xA, yA, xB, yB, x, y, vect_norm):
+    '''
+    Checks if there is an intersection between the segment [A,B] and the strait line that is directed by vect_norm and that passes through M = (x,y)
+    :param xA: (float) Coordonnates on Ox of the point A
+    :param yA: (float) Coordonnates on Oy of the point A
+    :param xB: (float) Coordonnates on Ox of the point B
+    :param yB: (float) Coordonnates on Oy of the point B
+    :param x: (float) Coordonnates on Ox of the point M
+    :param y: (float) Coordonnates on Oy of the point M
+    :param vect_norm: (list or array) Vector
+    :return: (Boolean) True if the intersect, False if they don't
+    '''
     mu = np.sqrt(sum([abs(i) for i in [xA,xB,x]])**2+sum([abs(i) for i in [yA,yB,y]])**2)
     vect = (mu * vect_norm)/norm(vect_norm)
     return intersectionSeg(xA,yA,xB,yB,x-vect[0],y-vect[0],x+vect[0],y+vect[0])
 
 
 
-def intersectPointLine(x, y, vect_norm, xA, yA, xB, yB):  # on calcule la distance entre un point et une droite, en connaissant le vecteur perpendiculaire à cette droite
+def intersectPointLine(x, y, vect_norm, xA, yA, xB, yB):
+    '''
+    Returns the intersection beween the strait line that passes through A and B and the strait line directed by vect_norm that passes through M = (x,y)
+    :param x: (float) Coordonnates on Ox of the point M
+    :param y: (float) Coordonnates on Oy of the point M
+    :param vect_norm: (list or array) Vectorn
+    :param xA: (float) Coordonnates on Ox of the point A
+    :param yA: (float) Coordonnates on Oy of the point A
+    :param xB: (float) Coordonnates on Ox of the point B
+    :param yB: (float) Coordonnates on Oy of the point B
+    :return: (array) Coordonnates of the intersection
+    '''
     if (xB - xA) != 0 and vect_norm[0] != 0:
         a1 = (yB - yA) / (xB - xA)  # les coefficients des deux droites considérées (on calcule l'intersection de la droite AB et de la droite qui passe par M dirigée par le vecteur vect_norm
         b1 = yB - a1 * xB

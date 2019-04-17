@@ -1,10 +1,14 @@
-from model.environnement import *
-from model.forces import *
-from model.intersections import *
-from model import builder
+from model.environnement import Wall,StandWall,Shop,Stand,Client,Entry,Exit
 from model.representation_graphique_statique import affichage_magasin, affichage_clients
+from model.utils import norm
+from model.forces import exteriorForces
+import numpy as np
+from model import builder
 from tkinter import Tk, Canvas
+import random as rd
 import time
+
+
 
 def representation_evolution(shop, dt, T):
     t = 0
@@ -12,6 +16,7 @@ def representation_evolution(shop, dt, T):
     F_wall0 = 400
     d_0 = 1
     F_stand0 = F_wall0
+    v_max = 4
 
     #création fenêtre
     root = Tk()
