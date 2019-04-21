@@ -47,28 +47,45 @@ print("[INFO] starting video stream...")
 vs = cv2.VideoCapture(args["video"])
 writer = None
 
+#Initialize variables
+#points is the list of points that defien the bounding box
 points = np.zeros((4,2))
 global n_points
 n_points = 0
 global go 
 go = False
+
 def draw_circle(event,x,y,flags,param):
+	'''
+	<- event (opencv event), x (int), y (int), flags, param
+	-> None
+	Creates a circle on the clicked location. It is designed to be set as 
+	the default response click response with cv2.setMouseCallback()
+	'''
+
+	#utilize global variables (ugly method, maybe change)
 	global mouseX,mouseY
 	global n_points
 	global go
+
+	#only cares about left click
 	if event == cv2.EVENT_LBUTTONDBLCLK:
 
+		#add the point to the list of points
 		mouseX,mouseY = x,y
 		points[n_points][0] = x
 		points[n_points][1] = y
 
+		#For the first point just draw a circe
 		if n_points == 0:
 			cv2.circle(frame,(x,y),3,(0,0,0))
 		
+		#For the second and third draw lines
 		elif 3 > n_points > 0:
 			old_x, old_y = int(points[n_points - 1][0]), int(points[n_points - 1][1])
 			cv2.line(frame, (old_x, old_y), (x,y), (0,0,0), 5)
 		
+		#For the fourth draw the two lines
 		else:
 			old_x, old_y = int(points[0][0]), int(points[0][1])
 			cv2.line(frame, (old_x, old_y), (x,y), (0,0,0), 5)
@@ -76,6 +93,7 @@ def draw_circle(event,x,y,flags,param):
 			old_x, old_y = int(points[n_points - 1][0]), int(points[n_points - 1][1])
 			cv2.line(frame, (old_x, old_y), (x,y), (0,0,0), 5)
 
+			#written like this to avoid confucion with local variables
 			n_points -= n_points
 			go = True
 
@@ -83,48 +101,54 @@ def draw_circle(event,x,y,flags,param):
 
 def define_real_coord(points, dimentions, frame, A):
 	"""
+	-> points (numpy matrix), dimension (couple), frame (opencv image), A (opencv image)
+	<- to_real_coordinates (python function)
+	Defines the function to translate video coordiantes to "real" coordiantes
 	"""
+
 	#define variables
 	N = len(points)
 
-	#determine correct order
+	#determine clockwise order of points
+	#initialize search for the minimum norm
 	maxx = 10000
 	i_x = 0
+	#find point of minimum norm
 	for i in range(N):
 		
 		if np.linalg.norm(points[i]) <= maxx:
 			maxx = np.linalg.norm(points[i])
 			i_x = i
 	
+	#determine clockwise sense
 	if np.cross(points[i_x], points[(i_x + 1) % N]) < 0:
-		x = int(points[(i_x)][0])
-		y = int(points[(i_x)][1])
-		cv2.circle(frame,(x,y),10,(0,255,0))
 		sense = -1
 	else:
-		x = int(points[(i_x)][0])
-		y = int(points[(i_x)][1])
-		cv2.circle(frame,(x,y),10,(0,255,0))
 		sense = 1
 
+	#p1 to p4 are the "real" points corresponding to the ends of the bounding box
 	p1 = [0,0]
 	p2 = [0,dimentions[0] - 1]
 	p3 = [dimentions[1] - 1,dimentions[0] - 1]
 	p4 = [dimentions[1] - 1, 0]
 	target = np.array([p1,p2,p3,p4])
 
+	#put the points in an array in the rigth order
 	ordered_points = np.zeros((4,2))
 	for i in range(4):
 
+		#iterate over the points in a clockwise sense
 		x = points[(i_x + N + sense * i) % N][0]
 		y = points[(i_x + N + sense * i) % N][1]
 		ordered_points[i] = (x,y)
 
+		#write their real and video coordinates on the image
 		cv2.putText(frame, str(target[i][0]) + ", " + str(target[i][1]), (int(x),int(y)),
 					cv2.FONT_HERSHEY_SIMPLEX, 0.45, (0, 255, 0), 2)
 		cv2.putText(frame, str(x) + ", " + str(y), (int(x),int(y) - 15),
 					cv2.FONT_HERSHEY_SIMPLEX, 0.45, (0, 255, 0), 2)
 
+	#solve the perspective problem (copyed method, must review)
 	matrix = []
 	for p1, p2 in zip(ordered_points, target):
 		matrix.append([p1[0], p1[1], 1, 0, 0, 0, -p2[0]*p1[0], -p2[0]*p1[1]])
@@ -136,10 +160,18 @@ def define_real_coord(points, dimentions, frame, A):
 	temp = np.dot(np.linalg.inv(C.T * C) * C.T, B)
 	res = np.array(temp).reshape(8)
 
+	#define the coordinate transformation function
 	def to_real_coordinates(x,y):
+		'''
+		-> x (float), y (float)
+		<- new_x (float), new_y (float)
+		'''
+
+		#apply linear transformation
 		new_x = (res[0] * x + res[1] * y + res[2]) / (res[6] * x + res[7] * y + 1)
 		new_y = (res[3] * x + res[4] * y + res[5]) / (res[6] * x + res[7] * y + 1)
 		
+		#crop if sligthly outside of bounds
 		new_x = max(new_x, 0)
 		new_y = max(new_y, 0)
 		new_x = min(new_x, dimentions[1] - 1)
@@ -148,45 +180,51 @@ def define_real_coord(points, dimentions, frame, A):
 
 		return (new_x, new_y)
 	
-
-	for i in range(4):
-
-		x = ordered_points[i][0]
-		y = ordered_points[i][1]
-		x, y = to_real_coordinates(x,y)
-
 	return to_real_coordinates
 
 def within_bounds(polygon, points):
-
+	'''
+	-> polygon (list of points), points (list of points)
+	<- bool
+	Determines if any of the elements of points is outside the area defined by polygon
+	'''
 
 	p = path.Path(polygon)
 
 	return not (False in p.contains_points(points))
 
 
-
+#read frame from video
 (grabbed, frame) = vs.read()
-#cv2.imshow('Frame',frame)
 
-
+#define the dimentions of the window (done randomly, should do properly)
 dimentions = (400, 200)
+
+#initialize the "real" coordinate matrix
 A = np.zeros(dimentions)
+
+#First loop with fixed image to mark bounding box
+
+#Resize the images
+frame = imutils.resize(frame, width=600)
+A = imutils.resize(A, width=600)
+
 while(1):
-	frame = imutils.resize(frame, width=600)
-	A = imutils.resize(A, width=600)
+	#Show the image so the box can be set
 	cv2.imshow('Frame',frame)
-	#cv2.imshow('Rien',A)
+	#Define the callback to drax the square
 	cv2.setMouseCallback('Frame',draw_circle)
+
+	#Define the coordinate transformation
 	if go:
 
 		to_real_coordinates = define_real_coord(points, frame.shape[0:2], frame, A)
 		go = False
+
+	#wait for key, with q pass to next step
 	k = cv2.waitKey(20) & 0xFF
 	if k == ord('q'):
 		break
-	elif k == ord('a'):
-		print(mouseX, mouseY)
 
 
 # initialize the list of class labels MobileNet SSD was trained to
@@ -208,9 +246,8 @@ writer = None
 # initialize the list of object trackers and corresponding class
 # labels
 trackers = []
-labels = []
 paths = []
-conf = []
+
 # start the frames per second throughput estimator
 fps = FPS().start()
 
@@ -238,48 +275,43 @@ while True:
 	# if there are no object trackers we first need to detect objects
 	# and then create a tracker for each object
 	if len(trackers) == 0:
-		# grab the frame dimentions and convert the frame to a blob
+		# load the predefined boxes
 		boxes = load_path()
 
-		# loop over the detections
+		# loop over the boxes
 		for box in boxes:
-			# extract the confidence (i.e., probability) associated
-			# with the prediction
-			confidence = 0.5
-
-			# filter out weak detections by requiring a minimum
-			# confidence
-
-			if confidence > args["confidence"]:
-				# extract the index of the class label from the
-				# detections list
 
 
-				(startX, startY, dX, dY) = box
+			# extract the index of the class label from the
+			# detections list
 
-				mx, my = (startX + (dX)/2, (startY + dY))
-				rmx, rmy = to_real_coordinates(mx, my)
-				cv2.circle(A, ((int(rmx), int(rmy))), 3, (255,255,0), thickness = 2)
 
-				# construct a dlib rectangle object from the bounding
-				# box coordinates and start the correlation tracker
-				t = dlib.correlation_tracker()
-				rect = dlib.rectangle(startX, startY, startX + dX, startY + dY)
-				t.start_track(rgb, rect)
+			(startX, startY, dX, dY) = box
 
-				# update our set of trackers and corresponding class
-				# labels
+			mx, my = (startX + (dX)/2, (startY + dY))
+			rmx, rmy = to_real_coordinates(mx, my)
+			cv2.circle(A, ((int(rmx), int(rmy))), 3, (255,255,0), thickness = 2)
 
-				trackers.append(t)
+			# construct a dlib rectangle object from the bounding
+			# box coordinates and start the correlation tracker
+			t = dlib.correlation_tracker()
+			rect = dlib.rectangle(startX, startY, startX + dX, startY + dY)
+			t.start_track(rgb, rect)
 
-				# grab the corresponding class label for the detection
-				# and draw the bounding box
-				cv2.rectangle(frame, (startX, startY), (dX + startX, startY + dY),
-					(0, 255, 0), 2)
+			# update our set of trackers and corresponding class
+			# labels
 
-			paths = [0] * len(trackers)
-			for i in range(len(trackers)):
-				paths[i] = []
+			trackers.append(t)
+
+			# grab the corresponding class label for the detection
+			# and draw the bounding box
+			cv2.rectangle(frame, (startX, startY), (dX + startX, startY + dY),
+				(0, 255, 0), 2)
+
+		paths = [0] * len(trackers)
+		for i in range(len(trackers)):
+			paths[i] = []
+			
 	# otherwise, we've already performed detection so let's track
 	# multiple objects
 	else:
