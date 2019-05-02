@@ -54,7 +54,7 @@ def creation_legende():
     canvas.create_text(110, 185, text='Meuble')
 
     canvas.create_oval(38, 220, 48, 230, fill='green')
-    canvas.create_text(110, 225, text='Client')
+    canvas.create_text(110, 225, text='Customer')
 
     window.mainloop()
 
@@ -62,8 +62,8 @@ def affichage_magasin(shop, canevas):
 
     meubles = shop.getStands()
     murs = shop.getWalls()
-    entrees = shop.getEntry()
-    sorties = shop.getExit()
+    entrees = shop.getEntries()
+    sorties = shop.getExits()
 
     for meuble in meubles:
         coord = meuble.getPos()
@@ -99,7 +99,7 @@ def affichage_magasin(shop, canevas):
 
 def affichage_clients(shop, canevas, direction=False):
 
-    clients = shop.getClients()
+    clients = shop.getCustomers()
     liste_boules = []
     liste_lignes = []
     for client in clients:
@@ -131,7 +131,7 @@ if __name__ == '__main__':
     for exit in Sorties_test:
         Shop_test.addExit(exit)
     for client in Clients_test:
-        Shop_test.addClient(client)
+        Shop_test.addCustomer(client)
 
 
     creation_fenetre(Shop_test)

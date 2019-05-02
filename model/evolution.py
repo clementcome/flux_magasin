@@ -57,7 +57,7 @@ def representation_evolution(shop, dt, T):
     # i = 0
     while t < T:
         #Calcul de la position suivante des clients
-        for client in shop.getClients():
+        for client in shop.getCustomers():
 
             dv = dt*exteriorForces(client, shop,lambda x : np.exp(-x**power), d_0, F_wall0, F_stand0, F_0, F_exit)
             pos = client.getPos()
@@ -71,10 +71,11 @@ def representation_evolution(shop, dt, T):
             pos = client.getPos()
 
             #Déplacement des clients
-            magasin.coords(liste_boules[client.getId()], pos[0]+5, pos[1]+5, pos[0]+15, pos[1]+15)
-            speed = client.getSpeed()
-            magasin.coords(liste_lignes[client.getId()], pos[0]+10, pos[1]+10, pos[0]+5*speed[0]+10, pos[1]+5*speed[1]+10)
-            clients_exit(shop)
+            if not liste_boules[client.getId()] == None:
+                magasin.coords(liste_boules[client.getId()], pos[0]+5, pos[1]+5, pos[0]+15, pos[1]+15)
+                speed = client.getSpeed()
+                magasin.coords(liste_lignes[client.getId()], pos[0]+10, pos[1]+10, pos[0]+5*speed[0]+10, pos[1]+5*speed[1]+10)
+                clients_exit(shop, magasin, liste_boules, liste_lignes, x_max, y_max)
             root.update()
             time.sleep(.01)
             # if i%3 == 0:
@@ -100,12 +101,12 @@ def evolution_list(shop,T, dt,lambd,d_0,F_wall0,F_stand0,F_0, v_max, F_exit):
     '''
     t = 0
     syst = {}
-    for client in shop.getClients():
+    for client in shop.getCustomers():
         syst[client.getId()] = []
 
     while t < T:
         #Calcul de la position suivante des clients
-        for client in shop.getClients():
+        for client in shop.getCustomers():
             syst[client.getId()] = syst[client.getId()] + [client.getPos()[0],client.getPos()[1]]
 
             dv = dt*exteriorForces(client,shop,lambd,d_0,F_wall0,F_stand0,F_0, F_exit)
@@ -138,6 +139,6 @@ if __name__ == '__main__':
     Shop_test.addStand(Meubles_test)
     #Shop_test.addEntry(Entrees_test)
     #Shop_test.addExit(Sorties_test)
-    Shop_test.addClient(Clients_test)
+    Shop_test.addCustomer(Clients_test)
 
     representation_evolution(Shop_test, 1, T)

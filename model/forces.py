@@ -19,7 +19,7 @@ def exteriorForces(client,shop,lambd,d_0,F_wall0,F_stand0,F_0, F_exit):
     wallCoef = 1
     exitForces = np.zeros(2)
 
-    for otherClient in shop.getClients():
+    for otherClient in shop.getCustomers():
         if otherClient.getId()!= client.getId():
             forces = forces + F_0 * (np.array(client.getPos())-np.array(otherClient.getPos()))/abs(norm(np.array(client.getPos())-np.array(otherClient.getPos()))**2-d_0**2)
 
@@ -51,15 +51,18 @@ def exteriorForces(client,shop,lambd,d_0,F_wall0,F_stand0,F_0, F_exit):
     return wallCoef*(forces + exitForces) + wallForces
 
 
-def clients_exit(shop):
+def clients_exit(shop, magasin, liste_boules, liste_lignes, x_max, y_max):
     """
     Deletes a client if he approaches an exit
     :param shop: the shop (type : Shop)
+    :param fenetre: the tkinter window
+    :param liste_boules: the list of the green dots on tkinter, representing each customer
+    :param liste_lignes: y=the list of green lines representing the speed of each customer
     :return: None
     """
     #We create polygons around each exit (for now, exits are lines)
     list_exits = []
-    for exit in shop.getExit():
+    for exit in shop.getExits():
         normal = exit.getNormal()
         xA, yA, xB, yB = exit.getPos()
         A = [xA, yA] + 5*normal
@@ -69,8 +72,11 @@ def clients_exit(shop):
         polygon_exit = [A, B, C, D]
         list_exits.append(polygon_exit)
 
-    for client in shop.getClients():
+    for client in shop.getCustomers():
         pos = client.getPos()
         for exit in list_exits:
             if inside(pos[0], pos[1], exit):
-                shop.removeClient(client)
+                shop.removeCustomer(client)
+                magasin.coords(liste_boules[client.getId()], x_max+100, y_max+100, x_max+110, y_max+110)
+                liste_boules[client.getId()] = None
+                magasin.coords(liste_lignes[client.getId()], x_max+100, y_max+100, x_max+110, y_max+110)

@@ -24,6 +24,6 @@ shop.addWall(Murs_test)
 shop.addStand(Meubles_test)
 shop.addEntry(Entrees_test)
 shop.addExit(Sorties_test)
-shop.addClient(Clients_test)
+shop.addCustomer(Clients_test)
 
 print(evolution_list(shop,T, dt,lambd,d_0,F_wall0,F_stand0,F_0, v_max,F_exit))
