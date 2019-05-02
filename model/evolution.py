@@ -1,7 +1,7 @@
 from model.environnement import Wall,StandWall,Shop,Stand,Customer,Entry,Exit
 from model.representation_graphique_statique import affichage_magasin, affichage_clients
 from model.utils import norm
-from model.forces import exteriorForces, clients_exit
+from model.forces import exteriorForces, customers_exit
 import numpy as np
 from model import builder
 from tkinter import Tk, Canvas
@@ -77,7 +77,7 @@ def representation_evolution(shop, dt, T):
                 speed = customer.getSpeed()
                 magasin.coords(balls_list[customer.getId()], pos[0]+5, pos[1]+5, pos[0]+15, pos[1]+15)
                 magasin.coords(lines_list[customer.getId()], pos[0]+10, pos[1]+10, pos[0]+5*speed[0]+10, pos[1]+5*speed[1]+10)
-                clients_exit(shop, magasin, balls_list, lines_list, x_max, y_max)
+                customers_exit(shop, magasin, balls_list, lines_list, x_max, y_max)
             root.update()
             time.sleep(.01)
             # if i%3 == 0:
