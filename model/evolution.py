@@ -1,5 +1,5 @@
 from model.environnement import Wall,StandWall,Shop,Stand,Customer,Entry,Exit
-from model.representation_graphique_statique import affichage_magasin, affichage_clients
+from model.static_graphic_display import store_display, customers_display
 from model.utils import norm
 from model.forces import exteriorForces, customers_exit
 import numpy as np
@@ -20,9 +20,9 @@ def representation_evolution(shop, dt, T):
     # Constants
     t = 0
     F_0 = 10
-    F_wall0 = 400
+    F_wall0 = 1000
     d_0 = 1
-    F_stand0 = F_wall0
+    F_stand0 = F_wall0/4
     F_exit = 1
     v_max = 4
     power = 0.4
@@ -50,13 +50,16 @@ def representation_evolution(shop, dt, T):
     magasin.pack()
 
     # Display the shop
-    affichage_magasin(shop, magasin)
+    store_display(shop, magasin)
 
     # Display the customers' starting point and retrieves the list of clients
-    balls_list, lines_list = affichage_clients(shop, magasin, False)
+    balls_list, lines_list = customers_display(shop, magasin, False)
 
-    # i = 0
+    i = 0
     while t < T:
+        if i%10 == 0 and i != 0:
+            shop.addCustomer(Customer(210, 5, 0, 4, 6))
+            balls_list.append(magasin.create_oval(215, 10, 225, 20, fill='green'))
         # Calculation of the next position of each customer
         for customer in shop.getCustomers():
 
@@ -76,7 +79,8 @@ def representation_evolution(shop, dt, T):
                 pos = customer.getPos()
                 speed = customer.getSpeed()
                 magasin.coords(balls_list[customer.getId()], pos[0]+5, pos[1]+5, pos[0]+15, pos[1]+15)
-                magasin.coords(lines_list[customer.getId()], pos[0]+10, pos[1]+10, pos[0]+5*speed[0]+10, pos[1]+5*speed[1]+10)
+                if lines_list:
+                    magasin.coords(lines_list[customer.getId()], pos[0]+10, pos[1]+10, pos[0]+5*speed[0]+10, pos[1]+5*speed[1]+10)
                 customers_exit(shop, magasin, balls_list, lines_list, x_max, y_max)
             root.update()
             time.sleep(.01)
@@ -84,6 +88,7 @@ def representation_evolution(shop, dt, T):
             #     magasin.postscript(file="C:\\Users\\coren\\Desktop\\Matieres\\Projet_Mouvement_Foule\\Programme_git\\images\\image{}.ps".format(i), colormode='color')
             # i += 1
         t += dt
+        i += 1
     root.mainloop()
 
 

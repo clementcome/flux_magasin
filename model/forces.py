@@ -1,5 +1,4 @@
 import numpy as np
-from model.environnement import Wall,StandWall,Shop,Stand,Client,Entry,Exit
 from model.intersections import intersectPointLine, intersectionSegDroite, inside
 from model.utils import norm
 
@@ -81,4 +80,6 @@ def customers_exit(shop, canvas, balls_list, lines_list, x_max, y_max):
                 shop.removeCustomer(customer)
                 canvas.coords(balls_list[customer.getId()], x_max + 100, y_max + 100, x_max + 110, y_max + 110)
                 balls_list[customer.getId()] = None
-                canvas.coords(lines_list[customer.getId()], x_max + 100, y_max + 100, x_max + 110, y_max + 110)
+                if lines_list:
+                    canvas.coords(lines_list[customer.getId()], x_max + 100, y_max + 100, x_max + 110, y_max + 110)
+                    lines_list[customer.getId()] = None

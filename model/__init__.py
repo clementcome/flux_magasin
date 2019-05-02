@@ -1,4 +1,4 @@
-from model.environnement import Wall,StandWall,Shop,Stand,Client,Entry,Exit
+from model.environnement import Wall, StandWall, Shop, Stand, Customer, Entry, Exit
 
 def builder(list,flux):
     '''
