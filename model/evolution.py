@@ -20,6 +20,7 @@ def representation_evolution(shop, dt, T):
     t = 0
     F_0 = 10
     F_wall0 = 400
+    F_exit = 10*F_wall0
     d_0 = 1
     F_stand0 = F_wall0
     v_max = 4
@@ -56,7 +57,7 @@ def representation_evolution(shop, dt, T):
         #Calcul de la position suivante des clients
         for client in shop.getClients():
 
-            dv = dt*exteriorForces(client, shop,lambda x : np.exp(-x**0.4),d_0,F_wall0,F_stand0,F_0)
+            dv = dt*exteriorForces(client, shop,lambda x : np.exp(-x**0.4),d_0,F_wall0,F_stand0,F_0,F_exit)
             pos = client.getPos()
             speed = client.getSpeed()
             if norm(speed+dv)<v_max:
