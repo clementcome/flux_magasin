@@ -116,7 +116,16 @@ def view_field(stand, shop):
             other_points.append([point_inter,0,0])
     return poly +other_points
 
-def unobstructed_stand_wall(pointStand,pointWall,stand,wall,shop):#regarde si dans le magasin il y a une intersection entre le point sur stand et le point sur wall
+def unobstructed_stand_wall(pointStand,pointWall,stand,wall,shop):
+    '''
+    Checks if in the shop there is an intersection between the point on the stand and the point on the wall
+    :param pointStand:(list) point that belongs to a stand
+    :param pointWall: (list) point that belongs to a wall
+    :param stand: (Stand) stand on witch the pointStand is located
+    :param wall: (Wall) wall on witch the pointWall is located
+    :param shop: (Shop) the shop
+    :return: True if there is no intersection in the shop with the segment formed by these two points, False otherwise
+    '''
     keep = True
     for wall_check in shop.getWalls():  # pour tous les autres murs on regarde si il y a une intersection
         if wall.getId() != wall_check.getId():
@@ -132,6 +141,15 @@ def unobstructed_stand_wall(pointStand,pointWall,stand,wall,shop):#regarde si da
     return keep
 
 def unobstructed_stand_stand(pointStand1,pointStand2,stand1,wallOfStand2,shop):
+    '''
+    Checks if there is an intersection in the shop with the segment [pointStand1, pointStand2]
+    :param pointStand1: (list) point on stand1
+    :param pointStand2: (list) point on wallOfStand2
+    :param stand1: (Stand) stand that contains pointStand1
+    :param wallOfStand2: (StandWall) stand wall that contains pointStand2
+    :param shop: (Shop) the shop
+    :return: True if there is no intersection in the shop with the segment formed by these two points, False otherwise
+    '''
     keep = True
     for wall_check in shop.getWalls():
         if intersectionSeg(pointStand1[0], pointStand1[1], pointStand2[0], pointStand2[1], wall_check.getPos()[0], wall_check.getPos()[1],
@@ -148,6 +166,12 @@ def unobstructed_stand_stand(pointStand1,pointStand2,stand1,wallOfStand2,shop):
     return keep
 
 def point_on_wall(point,wall):
+    '''
+    Checks if the point is on the wall
+    :param point:
+    :param wall:
+    :return:
+    '''
     if (point == [wall.getPos()[0],wall.getPos()[1]]) or (point ==[wall.getPos()[2],wall.getPos()[3]]):
         return True
     return False

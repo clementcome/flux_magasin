@@ -21,6 +21,8 @@ def creation_fenetre(shop):
         if coord[3] > y_max:
             y_max = coord[3]
 
+    print(x_max, y_max)
+
     global magasin
     magasin = Canvas(root, width=x_max+15, height=y_max+15)
     magasin.pack()
