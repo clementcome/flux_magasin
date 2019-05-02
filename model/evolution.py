@@ -1,7 +1,8 @@
 from model.environnement import Wall,StandWall,Shop,Stand,Client,Entry,Exit
 from model.representation_graphique_statique import affichage_magasin, affichage_clients
 from model.utils import norm
-from model.forces import exteriorForces
+from model.forces import exteriorForces, clients_exit
+from model.intersections import inside
 import numpy as np
 from model import builder
 from tkinter import Tk, Canvas
@@ -22,8 +23,9 @@ def representation_evolution(shop, dt, T):
     F_wall0 = 400
     d_0 = 1
     F_stand0 = F_wall0
-    F_exit = 0
+    F_exit = 1
     v_max = 4
+    power = 0.4
 
     #création fenêtre
     root = Tk()
@@ -57,7 +59,7 @@ def representation_evolution(shop, dt, T):
         #Calcul de la position suivante des clients
         for client in shop.getClients():
 
-            dv = dt*exteriorForces(client, shop,lambda x : np.exp(-x**0.4),d_0,F_wall0,F_stand0,F_0, F_exit)
+            dv = dt*exteriorForces(client, shop,lambda x : np.exp(-x**power), d_0, F_wall0, F_stand0, F_0, F_exit)
             pos = client.getPos()
             speed = client.getSpeed()
             if norm(speed+dv)<v_max:
@@ -72,6 +74,7 @@ def representation_evolution(shop, dt, T):
             magasin.coords(liste_boules[client.getId()], pos[0]+5, pos[1]+5, pos[0]+15, pos[1]+15)
             speed = client.getSpeed()
             magasin.coords(liste_lignes[client.getId()], pos[0]+10, pos[1]+10, pos[0]+5*speed[0]+10, pos[1]+5*speed[1]+10)
+            clients_exit(shop)
             root.update()
             time.sleep(.01)
             # if i%3 == 0:

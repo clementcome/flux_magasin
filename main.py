@@ -1,7 +1,8 @@
 from model import builder, representation_evolution
 from model.environnement import Stand,Client
 
-T = 150
+
+T = 300
 
 #Murs_test = [Wall(0,0,0,200), Wall(0,200,300,200), Wall(300,200,300,0), Wall(300,0,0,0)]
 #Entrees_test = [Entry(200,0,245,0,45), Entry(150,200,180,200,45)]

@@ -307,14 +307,24 @@ class Entry:
         '''
         return self.id
 
+    def getNormal(self):
+        '''
+        Returns the normal to the entry
+        :return: (array) Normal of the entry
+        '''
+        if (self.y2-self.y1)!=0:
+            return np.array([1,-(self.x2-self.x1)/(self.y2-self.y1)])/norm(np.array([1,-(self.x2-self.x1)/(self.y2-self.y1)]))
+        else:
+            return np.array([0,1])
+
 class Exit:
     def __init__(self,x1,y1,x2,y2):
         '''
         Creates an exit
-        :param x1: (float) Coordinate of the begining of the exit on the axis Ox
-        :param y1: (float) Coordinate of the begining of the exit on the axis Oy
-        :param x2: (float) Coordinate of the begining of the exit on the axis Ox
-        :param y2: (float) Coordinate of the begining of the exit on the axis Oy
+        :param x1: (float) Coordinate of the beginning of the exit on the axis Ox
+        :param y1: (float) Coordinate of the beginning of the exit on the axis Oy
+        :param x2: (float) Coordinate of the beginning of the exit on the axis Ox
+        :param y2: (float) Coordinate of the beginning of the exit on the axis Oy
         '''
         self.x1 = x1
         self.y1 = y1
@@ -337,6 +347,17 @@ class Exit:
         :return: (integer) Id
         '''
         return self.id
+
+    def getNormal(self):
+        '''
+        Returns the normal to the exit
+        :return: (array) Normal of the exit
+        '''
+        if (self.y2-self.y1)!=0:
+            return np.array([1,-(self.x2-self.x1)/(self.y2-self.y1)])/norm(np.array([1,-(self.x2-self.x1)/(self.y2-self.y1)]))
+        else:
+            return np.array([0,1])
+
 
 class Shop:
     def __init__(self,name):
@@ -448,14 +469,13 @@ class Shop:
         else:
             self.exits.append(exit)
 
-    def removeClient(self,id):
+    def removeClient(self,client):
         '''
-        Removes a client by it's id
-        :param id: (integer) Id of the client to be removed
+        Removes a client
+        :param client : the client to be removed
         '''
-        for i in range(len(self.clients)):
-            if self.clients[i].getId() == id:
-                self.clients.remove(i)
+
+        self.clients.remove(client)
 
     def removeEntry(self,id):
         '''

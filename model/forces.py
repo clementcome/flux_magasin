@@ -1,6 +1,6 @@
 import numpy as np
 from model.environnement import Wall,StandWall,Shop,Stand,Client,Entry,Exit
-from model.intersections import intersectPointLine, intersectionSegDroite
+from model.intersections import intersectPointLine, intersectionSegDroite, inside
 from model.utils import norm
 
 # def lambd(x):
@@ -49,3 +49,28 @@ def exteriorForces(client,shop,lambd,d_0,F_wall0,F_stand0,F_0, F_exit):
     for exit in shop.exits:
         exitForces += exitForce(client,exit, F_exit)
     return wallCoef*(forces + exitForces) + wallForces
+
+
+def clients_exit(shop):
+    """
+    Deletes a client if he approaches an exit
+    :param shop: the shop (type : Shop)
+    :return: None
+    """
+    #We create polygons around each exit (for now, exits are lines)
+    list_exits = []
+    for exit in shop.getExit():
+        normal = exit.getNormal()
+        xA, yA, xB, yB = exit.getPos()
+        A = [xA, yA] + 5*normal
+        B = [xB, yB] + 5*normal
+        C = [xB, yB] - 5*normal
+        D = [xA, yA] - 5*normal
+        polygon_exit = [A, B, C, D]
+        list_exits.append(polygon_exit)
+
+    for client in shop.getClients():
+        pos = client.getPos()
+        for exit in list_exits:
+            if inside(pos[0], pos[1], exit):
+                shop.removeClient(client)

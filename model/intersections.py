@@ -110,7 +110,7 @@ def intersectionSegDroite(xA, yA, xB, yB, x, y, vect_norm):
 
 def intersectPointLine(x, y, vect_norm, xA, yA, xB, yB):
     '''
-    Returns the intersection beween the strait line that passes through A and B and the strait line directed by vect_norm that passes through M = (x,y)
+    Returns the intersection bewteen the strait line that passes through A and B and the strait line directed by vect_norm that passes through M = (x,y)
     :param x: (float) Coordonnates on Ox of the point M
     :param y: (float) Coordonnates on Oy of the point M
     :param vect_norm: (list or array) Vectorn
@@ -136,3 +136,23 @@ def intersectPointLine(x, y, vect_norm, xA, yA, xB, yB):
         return np.array([xA, a2*xA+b2])  # dans ce cas xA=xB
     else:
         raise Exception('Le mur donné est un point')
+
+
+def inside(x, y, polygone):
+    """
+    Checks whether a point is inside a polygon
+    :param x: Coordonnate on the X axis
+    :param y: Coordonnate on the Y axis
+    :param polygone: Polygon (list of points)
+    :return: A boolean
+    """
+
+    compteur = 0
+
+    n = len(polygone)
+    for i in range(n-1):
+        xA, yA = polygone[i]
+        xB, yB = polygone[i+1]
+        if intersectionTop(x, y, xA, yA, xB, yB):
+            compteur += 1
+    return compteur % 2 == 1
