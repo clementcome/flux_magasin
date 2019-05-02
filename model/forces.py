@@ -7,6 +7,13 @@ from model.utils import norm
 #     return np.exp(-x**0.3)
 
 def exitForce(client,exit, F_exit):
+    '''
+    Computes the force exerted by the exits
+    :param client: (Client) The client considered
+    :param exit: (Exit) The exit considered
+    :param F_exit: (float) Module of the force exerted by the exits
+    :return: (array) Force exerted by the exit on the client
+    '''
     xForce = (exit.x1+exit.x2)/2 -client.x
     yForce = (exit.y1+exit.y2)/2 -client.y
     vecClientMur = np.array([xForce,yForce])
@@ -14,6 +21,18 @@ def exitForce(client,exit, F_exit):
     return vecForce
 
 def exteriorForces(client,shop,lambd,d_0,F_wall0,F_stand0,F_0, F_exit):
+    '''
+    Computes the forces applied to a client
+    :param client: (Client) The client considered
+    :param shop:  (Shop) The shop
+    :param lambd: (function) Fuction that caracterises the repultion of the walls
+    :param d_0:  (float) Diameter of a client
+    :param F_wall0: (float) Module of the force exerted by a wall
+    :param F_stand0: (float) Module of the force exerted by a stand wall
+    :param F_0: (float) Module of the social force
+    :param F_exit: (float) Module of the force exerted by the exits
+    :return: (array) Force exerted by the shop on the client
+    '''
     forces = np.zeros(2)
     wallForces = np.zeros(2)
     wallCoef = 1
