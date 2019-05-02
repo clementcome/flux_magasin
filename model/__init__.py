@@ -7,7 +7,6 @@ def builder(list,flux):
     :param flux: (float) Flux of the entries
     :return: (Shop) The shop build with theses components
     '''
-
     shop = Shop("Magasin")
     i = 0
     while i<len(list)-1:

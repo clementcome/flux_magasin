@@ -1,5 +1,5 @@
-from tkinter import *
-from flux_magasin.model.environnement import *
+from tkinter import Tk, Canvas
+from model.environnement import Wall,StandWall,Shop,Stand,Client,Entry,Exit
 
 def creation_fenetre(shop):
     global root
@@ -99,13 +99,14 @@ def affichage_clients(shop, canevas, direction=False):
 
     clients = shop.getClients()
     liste_boules = []
+    liste_lignes = []
     for client in clients:
         coord = client.getPos()
         liste_boules.append(canevas.create_oval(coord[0]+5, coord[1]+5, coord[0]+15, coord[1]+15, fill='green'))
         if direction:
             vitesse = client.getSpeed()
-            canevas.create_line(coord[0]+10, coord[1]+10, coord[0]+5*vitesse[0]+10, coord[1]+5*vitesse[1]+10, fill='green', arrow='last')
-    return liste_boules
+            liste_lignes.append(canevas.create_line(coord[0]+10, coord[1]+10, coord[0]+5*vitesse[0]+10, coord[1]+5*vitesse[1]+10, fill='green', arrow='last'))
+    return liste_boules, liste_lignes
 
 
 
