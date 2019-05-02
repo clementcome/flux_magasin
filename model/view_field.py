@@ -124,7 +124,7 @@ def unobstructed_stand_wall(pointStand,pointWall,stand,wall,shop):
     :param stand: (Stand) stand on witch the pointStand is located
     :param wall: (Wall) wall on witch the pointWall is located
     :param shop: (Shop) the shop
-    :return: True if there is no intersection in the shop with the segment formed by these two points, False otherwise
+    :return: (boolean) True if there is no intersection in the shop with the segment formed by these two points, False otherwise
     '''
     keep = True
     for wall_check in shop.getWalls():  # pour tous les autres murs on regarde si il y a une intersection
@@ -148,7 +148,7 @@ def unobstructed_stand_stand(pointStand1,pointStand2,stand1,wallOfStand2,shop):
     :param stand1: (Stand) stand that contains pointStand1
     :param wallOfStand2: (StandWall) stand wall that contains pointStand2
     :param shop: (Shop) the shop
-    :return: True if there is no intersection in the shop with the segment formed by these two points, False otherwise
+    :return: (boolean) True if there is no intersection in the shop with the segment formed by these two points, False otherwise
     '''
     keep = True
     for wall_check in shop.getWalls():
@@ -168,24 +168,42 @@ def unobstructed_stand_stand(pointStand1,pointStand2,stand1,wallOfStand2,shop):
 def point_on_wall(point,wall):
     '''
     Checks if the point is on the wall
-    :param point:
-    :param wall:
-    :return:
+    :param point: (list) coordinates of the point
+    :param wall: (Wall) Wall
+    :return: (boolean) True if the point is one of the edges of the wall, False otherwise
     '''
     if (point == [wall.getPos()[0],wall.getPos()[1]]) or (point ==[wall.getPos()[2],wall.getPos()[3]]):
         return True
     return False
 def point_on_stand_wall(point,stand_wall):
+    '''
+    Checks if the point is on the wall stand
+    :param point: (list) coordinates of the point
+    :param stand_wall: (StandWall)  StandWall
+    :return: (boolean) True if the point is one of the edges of the stand wall, False otherwise
+    '''
     if (point == [stand_wall.getPos()[0],stand_wall.getPos()[1]]) or (point ==[stand_wall.getPos()[2],stand_wall.getPos()[3]]):
         return True
     return False
 def find_wall(point,shop):
+    '''
+    Finds the walls on witch the point is one of the edges
+    :param point: (list) Coordinates of the point
+    :param shop: (Shop) Shop
+    :return: (list) List of the walls where point is one of the edges
+    '''
     res = []
     for wall in shop.getWalls():
         if (point == [wall.getPos()[0],wall.getPos()[1]]) or (point ==[wall.getPos()[2],wall.getPos()[3]]):
             res.append(wall)
     return res
 def find_stand_wall(point,shop):
+    '''
+    Finds the stand walls on witch the point is one of the edges
+    :param point: (list) Coordinates of the point
+    :param shop: (Shop) Shop
+    :return: (list) List of the stand walls where point is one of the edges
+    '''
     res = []
     for stand in shop.getStands():
         for stand_wall in stand.getStandWalls():
@@ -194,6 +212,10 @@ def find_stand_wall(point,shop):
     return res
 ###
 def creation_fenetre_fov(shop):
+    '''
+    Creates the frame
+    :param shop: (Shop) The shop
+    '''
     global root
     root = Tk()
     root.title('Magasin')
