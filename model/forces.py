@@ -21,58 +21,10 @@ def exitForce(client,exit, F_exit):
     return vecForce
 
 def angle(customer1,customer2):
-    return 0
+    return np.arccos(np.vdot(customer1.getSpeed(),customer2.getSpeed())/(norm(customer1.getSpeed())*norm(customer2.getSpeed())))
 
 def vision_coef(customer1, customer2, lambd):
     return lambd + (1-lambd)*(np.cos(angle(customer1,customer2))+1)/2
-# def exteriorForces(customer,shop,lambd,d_0,F_wall0,F_stand0,F_0, F_exit):
-#     """
-#     Computes the forces applied to a client
-#     :param customer: (Client) The client considered
-#     :param shop:  (Shop) The shop
-#     :param lambd: (function) Fuction that caracterises the repultion of the walls
-#     :param d_0:  (float) Diameter of a client
-#     :param F_wall0: (float) Module of the force exerted by a wall
-#     :param F_stand0: (float) Module of the force exerted by a stand wall
-#     :param F_0: (float) Module of the social force
-#     :param F_exit: (float) Module of the force exerted by the exits
-#     :return: (array) Force exerted by the shop on the client
-#     """
-#     forces = np.zeros(2)
-#     wallForces = np.zeros(2)
-#     wallCoef = 1
-#     exitForces = np.zeros(2)
-#
-#     for otherCustomer in shop.getCustomers():
-#         if otherCustomer.getId() != customer.getId():
-#             forces = forces + F_0 * (np.array(customer.getPos()) - np.array(otherCustomer.getPos())) / abs(norm(np.array(customer.getPos()) - np.array(otherCustomer.getPos())) ** 2 - d_0 ** 2)
-#
-#     for wall in shop.getWalls():
-#         if intersectionSegDroite(wall.getPos()[0], wall.getPos()[1], wall.getPos()[2], wall.getPos()[3], customer.getPos()[0], customer.getPos()[1], wall.getNormal()):
-#             intersect = intersectPointLine(customer.getPos()[0], customer.getPos()[1], wall.getNormal(), wall.getPos()[0], wall.getPos()[1], wall.getPos()[2], wall.getPos()[3])
-#             dist = norm(intersect - np.array([customer.getPos()[0], customer.getPos()[1]]))
-#             wallCoef = wallCoef * (1-lambd(dist))
-#             if np.vdot(wall.getNormal(), np.array([customer.getPos()[0], customer.getPos()[1]]) - intersect) > 0:
-#                 wallForces = wallForces + lambd(dist) * F_wall0 * wall.getNormal()
-#             else:
-#                 wallForces = wallForces - lambd(dist) * F_wall0 * wall.getNormal()
-#
-#     for stand in shop.getStands():
-#         for standWall in stand.getStandWalls():
-#             if intersectionSegDroite(standWall.getPos()[0], standWall.getPos()[1], standWall.getPos()[2], standWall.getPos()[3],
-#                                      customer.getPos()[0], customer.getPos()[1], standWall.getNormal()):
-#                 intersect = intersectPointLine(customer.getPos()[0], customer.getPos()[1], standWall.getNormal(), standWall.getPos()[0],
-#                                                standWall.getPos()[1], standWall.getPos()[2], standWall.getPos()[3])
-#                 dist = norm(intersect - np.array([customer.getPos()[0], customer.getPos()[1]]))
-#                 wallCoef = wallCoef * (1 - lambd(dist))
-#                 if np.vdot(standWall.getNormal(), np.array([customer.getPos()[0], customer.getPos()[1]]) - intersect) > 0:
-#                     wallForces = wallForces + lambd(dist) * F_stand0 * standWall.getNormal()
-#                 else:
-#                     wallForces = wallForces - lambd(dist) * F_stand0 * standWall.getNormal()
-#
-#     for exit in shop.exits:
-#         exitForces += exitForce(customer, exit, F_exit)
-#     return wallCoef * (forces + exitForces) + wallForces
 
 def exterior_forces(customer, shop, lambd, F_0, d_0, F_wall0, F_stand0 , F_exit, beta_customer, beta_wall):
     forces = np.zeros(2)
