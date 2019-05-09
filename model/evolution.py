@@ -2,12 +2,10 @@ from model.environnement import Wall,StandWall,Shop,Stand,Customer,Entry,Exit
 from model.static_graphic_display import store_display, customers_display
 from model.utils import norm
 from model.forces import exterior_forces, customers_exit
-import numpy as np
 from model import builder
 from tkinter import Tk, Canvas
-import random as rd
 import time
-
+import random as rd
 
 
 def representation_evolution(shop, dt, T):
@@ -24,11 +22,13 @@ def representation_evolution(shop, dt, T):
     F_wall0 = 1000
     d_0 = 1
     F_stand0 = F_wall0/4
-    F_exit = 10
+    F_exit = 5
     v_max = 4
     lambd = 1/2
     beta_customer = 10
     beta_wall = 10
+
+    flow = shop.getEntries()[0].getFlow()
 
     # Windows creation
     root = Tk()
@@ -49,7 +49,6 @@ def representation_evolution(shop, dt, T):
         if coord[3] > y_max:
             y_max = coord[3]
 
-
     magasin = Canvas(root, width=x_max+15, height=y_max+15)
     magasin.pack()
 
@@ -61,9 +60,18 @@ def representation_evolution(shop, dt, T):
 
     i = 0
     while t < T:
-        if i%10 == 0 and i != 0:
-            shop.addCustomer(Customer(210, 5, 0, 4, 6))
-            balls_list.append(magasin.create_oval(215, 10, 225, 20, fill='green'))
+
+        # New customers entering
+        if i % flow == 0 and i != 0:
+            for entry in shop.getEntries():
+                entry_pos = entry.getPos()
+                x = rd.uniform(entry_pos[0], entry_pos[2])
+                y = rd.uniform(entry_pos[1], entry_pos[3])
+                v_x = rd.uniform(-4, 4)
+                v_y = rd.uniform(-4, 4)
+                shop.addCustomer(Customer(x, y, v_x, v_y))
+                balls_list.append(magasin.create_oval(x + 5, y + 5, x + 15, y + 15, fill='green'))
+
         # Calculation of the next position of each customer
         for customer in shop.getCustomers():
 
