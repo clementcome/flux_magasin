@@ -6,6 +6,7 @@ import numpy as np
 from model import builder
 from tkinter import Tk, Canvas
 import time
+import random as rd
 
 
 
@@ -20,12 +21,14 @@ def representation_evolution(shop, dt, T):
     # Constants
     t = 0
     F_0 = 10
-    F_wall0 = 1000
+    F_wall0 = 500
     d_0 = 1
     F_stand0 = F_wall0/4
-    F_exit = 1
+    F_exit = 5
     v_max = 4
     power = 0.4
+
+    flow = shop.getEntries()[0].getFlow()
 
     # Windows creation
     root = Tk()
@@ -57,9 +60,17 @@ def representation_evolution(shop, dt, T):
 
     i = 0
     while t < T:
-        if i%10 == 0 and i != 0:
-            shop.addCustomer(Customer(210, 5, 0, 4, 6))
-            balls_list.append(magasin.create_oval(215, 10, 225, 20, fill='green'))
+        if i%flow == 0 and i != 0:
+            for entry in shop.getEntries():
+                entry_pos = entry.getPos()
+                x = rd.uniform(entry_pos[0], entry_pos[2])
+                y = rd.uniform(entry_pos[1], entry_pos[3])
+                v_x = rd.uniform(-4, 4)
+                v_y = rd.uniform(-4, 4)
+                shop.addCustomer(Customer(x, y, v_x, v_y))
+                print(x, y, v_x, v_y)
+                balls_list.append(magasin.create_oval(x + 5, y + 5, x + 15, y + 15, fill='green'))
+
         # Calculation of the next position of each customer
         for customer in shop.getCustomers():
 

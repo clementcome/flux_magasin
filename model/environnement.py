@@ -5,7 +5,7 @@ from model.utils import norm
 idWall = 0
 idStandWall = 0
 idStand = 0
-idClient = 0
+idCustomer = 0
 idEntry = 0
 idExit = 0
 idShop = 0
@@ -101,10 +101,10 @@ class Stand:
     def __init__(self, x1, y1, x2, y2):
         '''
         Creates a stand, it is defined by it's lower left corner and upper right corner
-        :param x1: (float) X-axis coordinate of the lower left corner
-        :param y1: (float) Y-axis coordinate of the lower left corner
-        :param x2: (float) X-axis coordinate of the upper right corner
-        :param y2: (float) Y-axis coordinate of the upper right corner
+        :param x1: (float) X-axis coordinate of the upper left corner
+        :param y1: (float) Y-axis coordinate of the upper left corner
+        :param x2: (float) X-axis coordinate of the lower right corner
+        :param y2: (float) Y-axis coordinate of the lower right corner
         '''
 
         #If (x1, y1) are the coordinates of the upper right corner, we exchange (x1, y1) and (x2, y2)
@@ -171,32 +171,23 @@ class Stand:
 
 
 class Customer:
-    def __init__(self, x, y, v_x, v_y, tRemain, nbPurchased=0, nbRemain=inf, repulsCoef=1):
+    def __init__(self, x, y, v_x, v_y):
         '''
         Creates a customer
         :param x: (float) X-axis coordinate of the customer
         :param y: (float) Y-axis coordinate of the customer
         :param v_x: (float) X-axis speed of the customer
         :param v_y: (float) Y-axis speed of the customer
-        :param tRemain: (float) Time until the customer wants to leave
-        :param nbPurchased:(integer) Number of items purchased
-        :param nbRemain: (integer) Number of items he still wants to purchase
-        :param repulsCoef: (float) Coefficient of repulsion of the customer
         '''
 
         self.x = x
         self.y = y
         self.v_x = v_x
         self.v_y = v_y
-        self.t_remain = tRemain
-        self.nbPurchased = nbPurchased
-        self.nb_remain = nbRemain
-        self.attract_coef = repulsCoef
-        self.leaving = False
 
-        global idClient
-        self.id = idClient
-        idClient += 1
+        global idCustomer
+        self.id = idCustomer
+        idCustomer += 1
 
     def getPos(self):
         '''
@@ -211,34 +202,6 @@ class Customer:
         :return: (list) Speed of the customer
         '''
         return np.array([self.v_x, self.v_y])
-
-    def getTime(self):
-        '''
-        Gives the time until he wants to leave the shop
-        :return: (float) Time remaining
-        '''
-        return self.t_remain
-
-    def getNbPurchased(self):
-        '''
-        Gives the number of articles purchased
-        :return: (integer) number of articles purchased
-        '''
-        return self.nbPurchased
-
-    def getArticlesRemaining(self):
-        '''
-        Gives the number of articles he still wants to buy
-        :return: (integer) Number of articles remaining
-        '''
-        return self.nb_remain
-
-    def getRepulsion(self):
-        '''
-        Return the repulsion coefficient
-        :return: (float) Repulsion coefficient
-        '''
-        return self.repulsCoef
 
     def setPos(self,pos):
         '''
@@ -255,21 +218,6 @@ class Customer:
         '''
         self.v_x = speed[0]
         self.v_y = speed[1]
-
-    def updateTime(self,time_passed):
-        '''
-        We remove the time that has passed and set leaving to True if there is no time left
-        :param time_passed: (float) Time passed
-        '''
-        self.t_remain = self.t_remain - time_passed
-        if self.t_remain < 0:
-            self.leaving = True
-
-    def updateArticle(self):
-        '''
-        Update the number of articles
-        '''
-        self.nb_remain -= 1
 
     def getId(self):
         '''
@@ -531,3 +479,6 @@ class Shop:
         for client in self.clients:
             if client.getId() == idC:
                 return client
+
+
+
