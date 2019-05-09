@@ -136,7 +136,6 @@ def intersectPointLine(x, y, vect_norm, xA, yA, xB, yB):
     else:
         raise Exception('The given wall is a point.')
 
-
 def inside(x, y, polygon):
     """
     Checks whether a point is inside a polygon

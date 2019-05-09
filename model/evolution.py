@@ -1,7 +1,7 @@
 from model.environnement import Wall,StandWall,Shop,Stand,Customer,Entry,Exit
 from model.static_graphic_display import store_display, customers_display
 from model.utils import norm
-from model.forces import exteriorForces, customers_exit
+from model.forces import exterior_forces, customers_exit
 import numpy as np
 from model import builder
 from tkinter import Tk, Canvas
@@ -21,12 +21,14 @@ def representation_evolution(shop, dt, T):
     # Constants
     t = 0
     F_0 = 10
-    F_wall0 = 500
+    F_wall0 = 1000
     d_0 = 1
     F_stand0 = F_wall0/4
-    F_exit = 5
+    F_exit = 10
     v_max = 4
-    power = 0.4
+    lambd = 1/2
+    beta_customer = 10
+    beta_wall = 10
 
     flow = shop.getEntries()[0].getFlow()
 
@@ -74,7 +76,7 @@ def representation_evolution(shop, dt, T):
         # Calculation of the next position of each customer
         for customer in shop.getCustomers():
 
-            dv = dt*exteriorForces(customer, shop, lambda x: np.exp(-x**power), d_0, F_wall0, F_stand0, F_0, F_exit)
+            dv = dt*exterior_forces(customer, shop, lambd, F_0, d_0, F_wall0, F_stand0, F_exit, beta_customer, beta_wall)
             pos = customer.getPos()
             speed = customer.getSpeed()
 
@@ -103,7 +105,7 @@ def representation_evolution(shop, dt, T):
     root.mainloop()
 
 
-def evolution_list(shop, T, dt, lambd, d_0, F_wall0, F_stand0, F_0, v_max, F_exit):
+def evolution_list(shop, T, dt, lambd, d_0, F_wall0, F_stand0, F_0, v_max, F_exit, beta_customer, beta_wall):
     """"
     Function that computes the evolution of the system and returns the trajectories of the clients
     :param shop: (Shop) Shop considered
@@ -116,6 +118,8 @@ def evolution_list(shop, T, dt, lambd, d_0, F_wall0, F_stand0, F_0, v_max, F_exi
     :param F_0: (float) Coefficient applied to the social force
     :param v_max: (float) Module of the maximum speed of the customer
     :param F_exit: (float) Coefficient applied to the force linked with the exit
+    :param beta_customer: (float) Coefficient in the exponential when computing the social force
+    :param beta_wall: (float) Coefficient in the exponential when computing the wall force
     :return: (list) List of the positions of all the clients over time
     """
 
@@ -129,7 +133,7 @@ def evolution_list(shop, T, dt, lambd, d_0, F_wall0, F_stand0, F_0, v_max, F_exi
         for customer in shop.getCustomers():
             syst[customer.getId()] += [customer.getPos()[0], customer.getPos()[1]]
 
-            dv = dt*exteriorForces(customer, shop, lambd, d_0, F_wall0, F_stand0, F_0, F_exit)
+            dv = dt*exterior_forces(customer, shop, lambd, F_0, d_0, F_wall0, F_stand0, F_exit, beta_customer, beta_wall)
             pos = customer.getPos()
             speed = customer.getSpeed()
 
