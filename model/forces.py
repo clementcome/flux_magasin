@@ -20,14 +20,14 @@ def exitForce(client,exit, F_exit):
     vecForce = F_exit*vecClientMur/norm(vecClientMur)
     return vecForce
 
-def angle(customer1,customer2):
+def cos_angle(customer1,customer2):
     """
     Return the angle between customer1 and customer2
     :param customer1: (Customer) customer1
     :param customer2: (Customer) customer2
     :return: (float) Angle between customer1 and customer2
     """
-    return np.arccos(np.vdot(customer1.getSpeed(),customer2.getSpeed())/(norm(customer1.getSpeed())*norm(customer2.getSpeed())))
+    return np.vdot(customer1.getSpeed(),customer2.getSpeed())/(norm(customer1.getSpeed())*norm(customer2.getSpeed()))
 
 def vision_coef(customer1, customer2, lambd):
     """
@@ -37,7 +37,7 @@ def vision_coef(customer1, customer2, lambd):
     :param lambd: (float) Coefficient of the vision
     :return: (float) Vision coefficient between customer1 and customer2
     """
-    return lambd + (1-lambd)*(np.cos(angle(customer1,customer2))+1)/2
+    return lambd + (1-lambd)*(cos_angle(customer1,customer2)+1)/2
 
 def exterior_forces(customer, shop, lambd, F_0, d_0, F_wall0, F_stand0 , F_exit, beta_customer, beta_wall):
     """

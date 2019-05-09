@@ -1,6 +1,6 @@
 from model import builder
 from model.environnement import Stand,Customer
-from model.evolution import representation_evolution
+from model.evolution import representation_evolution,one_client
 
 
 T = 300
@@ -37,3 +37,18 @@ Shop_test_one_client = builder([[0, 0],
                      [245, 0], "entree", [200, 0],
                      [0, 0]], 45)
 Shop_test_one_client.addCustomer(Customers_test)
+
+T = 300
+dt = 1
+F_0 = 10
+F_wall0 = 1000
+d_0 = 1
+F_stand0 = F_wall0/4
+F_exit = 10
+v_max = 4
+lambd = 1/2
+beta_customer = 10
+beta_wall = 10
+experience_list = []
+
+value = one_client(Shop_test_one_client,experience_list, T, dt, lambd, d_0, F_wall0, F_stand0, F_0, v_max, F_exit, beta_customer, beta_wall)
