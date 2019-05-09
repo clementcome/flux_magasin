@@ -22,7 +22,7 @@ def representation_evolution(shop, dt, T):
     F_wall0 = 400
     d_0 = 1
     F_stand0 = F_wall0
-    F_exit = 0
+    F_exit = 1
     v_max = 4
 
     #création fenêtre
@@ -43,7 +43,6 @@ def representation_evolution(shop, dt, T):
             y_max = coord[1]
         if coord[3] > y_max:
             y_max = coord[3]
-
 
     magasin = Canvas(root, width=x_max+15, height=y_max+15)
     magasin.pack()
@@ -68,7 +67,6 @@ def representation_evolution(shop, dt, T):
             #print(norm(speed))
             client.setPos(pos+dt*speed+dt*dv)
             pos = client.getPos()
-
 
             #Déplacement des clients
             magasin.coords(liste_boules[client.getId()], pos[0]+5, pos[1]+5, pos[0]+15, pos[1]+15)
