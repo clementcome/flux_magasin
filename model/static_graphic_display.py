@@ -141,7 +141,7 @@ if __name__ == '__main__':
     Entrees_test = [Entry(200,0,245,0,45), Entry(150,200,180,200,45)]
     Sorties_test = [Exit(0,100,0,150), Exit(150,200,180,200)]
     Meubles_test = [Stand(0,0,25,50), Stand(150,150,250,180)]
-    Clients_test = [Client(45,78,3,4,6), Client(187,23,7,7,7)]
+    Clients_test = [Customer(45,78,3,4,6), Customer(187,23,7,7,7)]
 
     Shop_test = Shop('test')
     for wall in Murs_test:

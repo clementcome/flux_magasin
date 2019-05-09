@@ -2,12 +2,10 @@ from model.environnement import Wall,StandWall,Shop,Stand,Customer,Entry,Exit
 from model.static_graphic_display import store_display, customers_display
 from model.utils import norm
 from model.forces import exterior_forces, customers_exit
-import numpy as np
 from model import builder
 from tkinter import Tk, Canvas
 import time
 import random as rd
-
 
 
 def representation_evolution(shop, dt, T):
@@ -24,7 +22,7 @@ def representation_evolution(shop, dt, T):
     F_wall0 = 1000
     d_0 = 1
     F_stand0 = F_wall0/4
-    F_exit = 10
+    F_exit = 5
     v_max = 4
     lambd = 1/2
     beta_customer = 10
@@ -62,7 +60,9 @@ def representation_evolution(shop, dt, T):
 
     i = 0
     while t < T:
-        if i%flow == 0 and i != 0:
+
+        # New customers entering
+        if i % flow == 0 and i != 0:
             for entry in shop.getEntries():
                 entry_pos = entry.getPos()
                 x = rd.uniform(entry_pos[0], entry_pos[2])
@@ -70,7 +70,6 @@ def representation_evolution(shop, dt, T):
                 v_x = rd.uniform(-4, 4)
                 v_y = rd.uniform(-4, 4)
                 shop.addCustomer(Customer(x, y, v_x, v_y))
-                print(x, y, v_x, v_y)
                 balls_list.append(magasin.create_oval(x + 5, y + 5, x + 15, y + 15, fill='green'))
 
         # Calculation of the next position of each customer

@@ -8,7 +8,7 @@ T = 300
 # Walls_test = [Wall(0, 0, 0, 200), Wall(0, 200, 300, 200), Wall(300, 200, 300, 0), Wall(300, 0, 0, 0)]
 # Entries_test = [Entry(200, 0, 245, 0, 45), Entry(150, 200, 180, 200, 45)]
 # Exits_test = [Exit(0, 100, 0, 150), Exit(150, 200, 180, 200)]
-Stands_test = [Stand(0, 0, 25, 50), Stand(180, 150, 250, 180)]
+Stands_test = [Stand(0, 0, 25, 50), Stand(100, 100, 120, 160)]
 Customers_test = [Customer(210, 5, 0, 4), Customer(220, 10, -0, 4), Customer(225, 6, -0, 3)]
 
 
