@@ -171,7 +171,7 @@ class Stand:
 
 
 class Customer:
-    def __init__(self, x, y, v_x, v_y):
+    def __init__(self, x, y, v_x, v_y, id = None):
         '''
         Creates a customer
         :param x: (float) X-axis coordinate of the customer

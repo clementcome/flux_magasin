@@ -6,6 +6,7 @@ from model import builder
 from tkinter import Tk, Canvas
 import time
 import random as rd
+import numpy as np
 
 
 def representation_evolution(shop, dt, T):
@@ -146,8 +147,9 @@ def evolution_list(shop, T, dt, lambd, d_0, F_wall0, F_stand0, F_0, v_max, F_exi
 
 def one_client(shop, experience_list, T, dt, lambd, d_0, F_wall0, F_stand0, F_0, v_max, F_exit, beta_customer, beta_wall):
     """"
-    Function that computes the evolution of the system and returns the trajectories of the clients
+    Function that computes the evolution of the system and returns the trajectories of the clients. Only the movement of the first client is modeled by our algorithm, the movement of the other clients is modeled by data
     :param shop: (Shop) Shop considered, without clients
+    :param experience_list: (list) List returned by the experience, with the coordinates of all the clients at all the times. The first client is the one that will be modeled by our model
     :param T: (float) Time frame considered
     :param dt: (float) Time step
     :param lambd: (function) Function that characterises the repulsion of the walls
@@ -161,29 +163,56 @@ def one_client(shop, experience_list, T, dt, lambd, d_0, F_wall0, F_stand0, F_0,
     :param beta_wall: (float) Coefficient in the exponential when computing the wall force
     :return: (list) List of the positions of all the clients over time
     """
+    #Removing the clients in the shop if there are any
+    if len(shop.getCustomers())!=0:
+        customers = shop.getCustomers()
+        for customer in customers:
+            shop.removeCustomer(customer)
+    #Adding the clients
+    id_list = []
+
+    customer_test = Customer(experience_list[0][0][0],experience_list[0][0][1],(experience_list[1][0][0]-experience_list[0][0][0])/dt,(experience_list[1][0][1]-experience_list[0][0][1])/dt)
+    shop.addCustomer(customer_test)
+    id_list.append(customer_test.getId())
+    ind_client_considered = 0
+
+    for i in range(1,len(experience_list[0])):
+        customer = Customer(experience_list[0][i][0],experience_list[0][i][1],(experience_list[1][i][0]-experience_list[0][i][0])/dt,(experience_list[1][i][1]-experience_list[0][i][1])/dt)
+        shop.addCustomer(customer)
+        id_list.append(customer.getId())
 
     t = 0
+    ind = 1
     syst = {}
     for customer in shop.getCustomers():
         syst[customer.getId()] = []
 
-    while t < T:
+    while ind < len(experience_list[0])-1:
         # Calculation of the next position of each customer
-        for customer in shop.getCustomers():
+        for i in range(id_list):
+            customer = shop.getCustomerById(id_list[i])
             syst[customer.getId()] += [customer.getPos()[0], customer.getPos()[1]]
 
-            dv = dt * exterior_forces(customer, shop, lambd, F_0, d_0, F_wall0, F_stand0, F_exit, beta_customer,
-                                      beta_wall)
-            pos = customer.getPos()
-            speed = customer.getSpeed()
+            if id_list[i] == customer_test.getId():
+                dv = dt * exterior_forces(customer, shop, lambd, F_0, d_0, F_wall0, F_stand0, F_exit, beta_customer,
+                                          beta_wall)
+                pos = customer.getPos()
+                speed = customer.getSpeed()
 
-            if norm(speed + dv) < v_max:
-                customer.setSpeed(speed + dv)
+                if norm(speed + dv) < v_max:
+                    customer.setSpeed(speed + dv)
+                else:
+                    customer.setSpeed(((speed + dv) / norm(speed + dv)) * v_max)
+                customer.setPos(pos + dt * speed + dt * dv)
             else:
-                customer.setSpeed(((speed + dv) / norm(speed + dv)) * v_max)
-            customer.setPos(pos + dt * speed + dt * dv)
-        t += dt
-    return syst
+                customer.setPos(experience_list[ind][i][0],experience_list[ind][i][1])
+                customer.setSpeed((experience_list[ind+1][i][0]-experience_list[ind][i][0])/dt,(experience_list[ind+1][i][1]-experience_list[ind][i][1])/dt)
+
+        ind+=1
+    RMS = 0
+    for i in range(len(syst[customer_test.getId()])):
+        RMS += (norm([experience_list[i][ind_client_considered][0]-syst[customer_test.getId()][i][0],experience_list[i][ind_client_considered][1]-syst[customer_test.getId()][i][1]]))**2
+    return np.sqrt((1/len(syst[customer_test.getId()]))*RMS)
 
 if __name__ == '__main__':
 
