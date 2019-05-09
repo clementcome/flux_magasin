@@ -27,3 +27,13 @@ Shop_test.addCustomer(Customers_test)
 
 
 representation_evolution(Shop_test, 1, T)
+
+##optimisation
+Shop_test_one_client = builder([[0, 0],
+                     [0, 100], "sortie", [0, 150],
+                     [0, 200],
+                     [150, 200], "entree_sortie", [180, 200],
+                     [300, 200], [300, 0],
+                     [245, 0], "entree", [200, 0],
+                     [0, 0]], 45)
+Shop_test_one_client.addCustomer(Customers_test)
