@@ -27,8 +27,8 @@ def representation_evolution(shop, dt, T):
     F_exit = 10
     v_max = 4
     lambd = 1/2
-    beta_customer = 1
-    beta_wall = 1
+    beta_customer = 10
+    beta_wall = 10
 
     # Windows creation
     root = Tk()
