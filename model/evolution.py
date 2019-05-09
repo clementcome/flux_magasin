@@ -144,6 +144,46 @@ def evolution_list(shop, T, dt, lambd, d_0, F_wall0, F_stand0, F_0, v_max, F_exi
         t += dt
     return syst
 
+def one_client(shop, experience_list, T, dt, lambd, d_0, F_wall0, F_stand0, F_0, v_max, F_exit, beta_customer, beta_wall):
+    """"
+    Function that computes the evolution of the system and returns the trajectories of the clients
+    :param shop: (Shop) Shop considered, without clients
+    :param T: (float) Time frame considered
+    :param dt: (float) Time step
+    :param lambd: (function) Function that characterises the repulsion of the walls
+    :param d_0: (float) Diameter of a person
+    :param F_wall0: (float) Module of the forces exerted by the walls
+    :param F_stand0: (float) Module of the forces exerted by the stands
+    :param F_0: (float) Coefficient applied to the social force
+    :param v_max: (float) Module of the maximum speed of the customer
+    :param F_exit: (float) Coefficient applied to the force linked with the exit
+    :param beta_customer: (float) Coefficient in the exponential when computing the social force
+    :param beta_wall: (float) Coefficient in the exponential when computing the wall force
+    :return: (list) List of the positions of all the clients over time
+    """
+
+    t = 0
+    syst = {}
+    for customer in shop.getCustomers():
+        syst[customer.getId()] = []
+
+    while t < T:
+        # Calculation of the next position of each customer
+        for customer in shop.getCustomers():
+            syst[customer.getId()] += [customer.getPos()[0], customer.getPos()[1]]
+
+            dv = dt * exterior_forces(customer, shop, lambd, F_0, d_0, F_wall0, F_stand0, F_exit, beta_customer,
+                                      beta_wall)
+            pos = customer.getPos()
+            speed = customer.getSpeed()
+
+            if norm(speed + dv) < v_max:
+                customer.setSpeed(speed + dv)
+            else:
+                customer.setSpeed(((speed + dv) / norm(speed + dv)) * v_max)
+            customer.setPos(pos + dt * speed + dt * dv)
+        t += dt
+    return syst
 
 if __name__ == '__main__':
 
