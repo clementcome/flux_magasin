@@ -257,7 +257,7 @@ if __name__ == '__main__':
     for exit in Sorties_test:
         Shop_test.addExit(exit)
     for client in Clients_test:
-        Shop_test.addClient(client)
+        Shop_test.addCustomer(client)
 
 
 
