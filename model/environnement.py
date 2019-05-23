@@ -101,10 +101,10 @@ class Stand:
     def __init__(self, x1, y1, x2, y2):
         '''
         Creates a stand, it is defined by it's lower left corner and upper right corner
-        :param x1: (float) X-axis coordinate of the upper left corner
-        :param y1: (float) Y-axis coordinate of the upper left corner
-        :param x2: (float) X-axis coordinate of the lower right corner
-        :param y2: (float) Y-axis coordinate of the lower right corner
+        :param x1: (float) X-axis coordinate of the lower right corner
+        :param y1: (float) Y-axis coordinate of the lower right corner
+        :param x2: (float) X-axis coordinate of the upper left corner
+        :param y2: (float) Y-axis coordinate of the upper left corner
         '''
 
         #If (x1, y1) are the coordinates of the upper right corner, we exchange (x1, y1) and (x2, y2)

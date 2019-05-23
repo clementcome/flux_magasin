@@ -1,9 +1,9 @@
-from model import builder, matrix_representation_for_fast_marching
+from model import builder
 from model.environnement import Stand,Customer
-from model.evolution import representation_evolution, evolution_list, one_client
+from model.evolution import representation_evolution,one_client
+import skfmm
 
-
-T = 1000
+T = 300
 
 # Walls_test = [Wall(0, 0, 0, 200), Wall(0, 200, 300, 200), Wall(300, 200, 300, 0), Wall(300, 0, 0, 0)]
 # Entries_test = [Entry(200, 0, 245, 0, 45), Entry(150, 200, 180, 200, 45)]
