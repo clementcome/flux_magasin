@@ -116,18 +116,9 @@ def representation_evolution(shop, dt, T):
 
     murs = shop.getWalls()
 
-    x_max = 0
-    y_max = 0
-    for mur in murs:
-        coord = mur.getPos()
-        if coord[0] > x_max:
-            x_max = coord[0]
-        if coord[2] > x_max:
-            x_max = coord[2]
-        if coord[1] > y_max:
-            y_max = coord[1]
-        if coord[3] > y_max:
-            y_max = coord[3]
+    shop.calculate_x_y_max()
+    x_max = shop.get_x_max()
+    y_max = shop.get_y_max()
 
     magasin = Canvas(root, width=x_max+15, height=y_max+15)
     magasin.pack()
@@ -181,7 +172,6 @@ def representation_evolution(shop, dt, T):
             # i += 1
         t += dt
         i += 1
-        time.sleep(0.1)
     root.mainloop()
     print(nb_exit_wall, 'people escaped through a wall.')
     print(nb_exit_legal, 'people exited legally.')

@@ -1,6 +1,6 @@
-from model import builder
+from model import builder, matrix_representation_for_fast_marching
 from model.environnement import Stand,Customer
-from model.evolution import representation_evolution, evolution_list
+from model.evolution import representation_evolution, evolution_list, one_client
 
 
 T = 1000
@@ -8,7 +8,7 @@ T = 1000
 # Walls_test = [Wall(0, 0, 0, 200), Wall(0, 200, 300, 200), Wall(300, 200, 300, 0), Wall(300, 0, 0, 0)]
 # Entries_test = [Entry(200, 0, 245, 0, 45), Entry(150, 200, 180, 200, 45)]
 # Exits_test = [Exit(0, 100, 0, 150), Exit(150, 200, 180, 200)]
-Stands_test = [Stand(0, 0, 25, 50), Stand(100, 100, 120, 160)]
+Stands_test = [Stand(10, 10, 35, 60), Stand(100, 100, 120, 160)]
 Customers_test = [Customer(210, 5, 0, 4), Customer(220, 10, -0, 4), Customer(225, 6, -0, 3)]
 
 
@@ -18,7 +18,7 @@ Shop_test = builder([[0, 0],
                      [150, 200], "entree", [180, 200],
                      [300, 200], [300, 0],
                      [245, 0], "entree", [200, 0],
-                     [0, 0]], 4)
+                     [0, 0]], 4, Stands_test)
 # Shop_test.addWall(Walls_test)
 Shop_test.addStand(Stands_test)
 # Shop_test.addEntry(Entries_test)
@@ -26,7 +26,7 @@ Shop_test.addStand(Stands_test)
 Shop_test.addCustomer(Customers_test)
 
 
-evolution_list(Shop_test, T, 0.1, 1/2, 1, 200, 50, 10, 4, 10, 10, 10)
+# representation_evolution(Shop_test, 1, T)
 
 ##optimisation
 Shop_test_one_client = builder([[0, 0],
@@ -35,7 +35,7 @@ Shop_test_one_client = builder([[0, 0],
                      [150, 200], "entree_sortie", [180, 200],
                      [300, 200], [300, 0],
                      [245, 0], "entree", [200, 0],
-                     [0, 0]], 45)
+                     [0, 0]], 45, Stands_test)
 Shop_test_one_client.addCustomer(Customers_test)
 
 T = 300
@@ -51,4 +51,6 @@ beta_customer = 10
 beta_wall = 10
 experience_list = []
 
-value = one_client(Shop_test_one_client,experience_list, T, dt, lambd, d_0, F_wall0, F_stand0, F_0, v_max, F_exit, beta_customer, beta_wall)
+# value = one_client(Shop_test_one_client,experience_list, T, dt, lambd, d_0, F_wall0, F_stand0, F_0, v_max, F_exit, beta_customer, beta_wall)
+
+matrix_representation_for_fast_marching(Shop_test_one_client)
