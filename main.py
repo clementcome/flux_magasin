@@ -1,9 +1,10 @@
 from model import builder
 from model.environnement import Stand,Customer
-from model.evolution import representation_evolution,one_client
+from model.evolution import representation_evolution,one_client,evolution_list
+import json
 import skfmm
 
-T = 300
+T = 1000
 
 # Walls_test = [Wall(0, 0, 0, 200), Wall(0, 200, 300, 200), Wall(300, 200, 300, 0), Wall(300, 0, 0, 0)]
 # Entries_test = [Entry(200, 0, 245, 0, 45), Entry(150, 200, 180, 200, 45)]
@@ -26,7 +27,7 @@ Shop_test.addStand(Stands_test)
 Shop_test.addCustomer(Customers_test)
 
 
-representation_evolution(Shop_test, 1, T)
+evolution_list(Shop_test, T, 0.1, 1/2, 1, 200, 50, 10, 4, 10, 10, 10)
 
 ##optimisation
 Shop_test_one_client = builder([[0, 0],
@@ -51,4 +52,12 @@ beta_customer = 10
 beta_wall = 10
 experience_list = []
 
-value = one_client(Shop_test_one_client,experience_list, T, dt, lambd, d_0, F_wall0, F_stand0, F_0, v_max, F_exit, beta_customer, beta_wall)
+#Data import
+
+with open("..//..//data//positions.txt", "r") as inputfile:
+    data = json.load(inputfile)
+print(type(data))
+Shop = builder(data["polygon_points"],1)
+#COmpute RMS
+
+#value = one_client(Shop_test_one_client,experience_list, T, dt, lambd, d_0, F_wall0, F_stand0, F_0, v_max, F_exit, beta_customer, beta_wall)

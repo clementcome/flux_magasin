@@ -121,14 +121,14 @@ def exterior_forces(customer, shop, lambd, F_0, d_0, F_wall0, F_stand0 , F_exit,
 #     return wallCoef * (forces + exitForces) + wallForces
 
 
-def customers_exit(shop, canvas, balls_list, lines_list, x_max, y_max):
+def customers_exit(shop, balls_list, lines_list, x_max, y_max, nb_exit_wall, nb_exit_legal, canvas=None):
     """
     Deletes a customer if he approaches an exit
     :param shop: the shop (type : Shop)
     :param canvas: the tkinter canvas
     :param balls_list: the list of the green dots on tkinter, representing each customer
     :param lines_list: y=the list of green lines representing the speed of each customer
-    :return: None
+    :return: The new number of people having escaped through the wall and through an exit (tupple)
     """
     #We create polygons around each exit (for now, exits are lines)
     list_exits = []
@@ -147,21 +147,24 @@ def customers_exit(shop, canvas, balls_list, lines_list, x_max, y_max):
 
         # If a customer pass through the wall, we signal it and deletes him
         if pos[0] > x_max+5 or pos[0] < -5 or pos[1] < -5 or pos[1] > y_max+5:
-            print('Someone escaped through the wall')
+            nb_exit_wall += 1
             shop.removeCustomer(customer)
-            canvas.coords(balls_list[customer.getId()], x_max + 100, y_max + 100, x_max + 110, y_max + 110)
-            balls_list[customer.getId()] = None
-            if lines_list:
-                canvas.coords(lines_list[customer.getId()], x_max + 100, y_max + 100, x_max + 110, y_max + 110)
-                lines_list[customer.getId()] = None
-
-        for exit in list_exits:
-            if inside(pos[0], pos[1], exit):
-                shop.removeCustomer(customer)
+            if canvas:
                 canvas.coords(balls_list[customer.getId()], x_max + 100, y_max + 100, x_max + 110, y_max + 110)
                 balls_list[customer.getId()] = None
                 if lines_list:
                     canvas.coords(lines_list[customer.getId()], x_max + 100, y_max + 100, x_max + 110, y_max + 110)
                     lines_list[customer.getId()] = None
 
+        for exit in list_exits:
+            if inside(pos[0], pos[1], exit):
+                nb_exit_legal += 1
+                shop.removeCustomer(customer)
+                if canvas:
+                    canvas.coords(balls_list[customer.getId()], x_max + 100, y_max + 100, x_max + 110, y_max + 110)
+                    balls_list[customer.getId()] = None
+                    if lines_list:
+                        canvas.coords(lines_list[customer.getId()], x_max + 100, y_max + 100, x_max + 110, y_max + 110)
+                        lines_list[customer.getId()] = None
 
+    return nb_exit_wall, nb_exit_legal
