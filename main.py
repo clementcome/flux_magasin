@@ -1,7 +1,7 @@
 from model import builder
 from model.environnement import Stand,Customer
 from model.evolution import representation_evolution,one_client
-
+import skfmm
 
 T = 300
 

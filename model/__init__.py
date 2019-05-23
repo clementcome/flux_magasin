@@ -1,6 +1,6 @@
 from model.environnement import Wall, StandWall, Shop, Stand, Customer, Entry, Exit
 
-def builder(list,flux):
+def builder(list, flux):
     '''
     Returns a shop built with the points in the list
     :param list: (list) List of the coordinates of the walls, and the entries/exits
