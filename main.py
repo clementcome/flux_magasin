@@ -1,6 +1,6 @@
-from model import builder
-from model.environnement import Stand,Customer
-from model.evolution import representation_evolution,one_client
+from model import builder, matrix_representation_for_fast_marching
+from model.environnement import Stand,Customer, Exit
+from model.evolution import representation_evolution,one_client, fast_marching_to_exit
 import skfmm
 
 T = 300
@@ -26,7 +26,7 @@ Shop_test.addStand(Stands_test)
 Shop_test.addCustomer(Customers_test)
 
 
-# representation_evolution(Shop_test, 1, T)
+representation_evolution(Shop_test, 1, T)
 
 ##optimisation
 Shop_test_one_client = builder([[0, 0],
@@ -53,5 +53,5 @@ experience_list = []
 
 # value = one_client(Shop_test_one_client,experience_list, T, dt, lambd, d_0, F_wall0, F_stand0, F_0, v_max, F_exit, beta_customer, beta_wall)
 
-matrix_representation_for_fast_marching(Shop_test_one_client)
-
+# phi = matrix_representation_for_fast_marching(Shop_test_one_client)
+# fast_marching_to_exit(phi, Exit(0, 100, 0, 150), Shop_test_one_client)

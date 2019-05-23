@@ -2,11 +2,14 @@ from model.environnement import Wall,StandWall,Shop,Stand,Customer,Entry,Exit
 from model.static_graphic_display import store_display, customers_display
 from model.utils import norm
 from model.forces import exterior_forces, customers_exit
-from model import builder
+from model import builder, matrix_representation_for_fast_marching
 from tkinter import Tk, Canvas
 import time
 import random as rd
 import numpy as np
+import matplotlib.pyplot as plt
+import skfmm
+
 
 COLORS = ['snow', 'ghost white', 'white smoke', 'gainsboro', 'floral white', 'old lace',
     'linen', 'antique white', 'papaya whip', 'blanched almond', 'bisque', 'peach puff',
@@ -129,6 +132,18 @@ def representation_evolution(shop, dt, T):
     # Display the customers' starting point and retrieves the list of clients
     balls_list, lines_list = customers_display(shop, magasin, False)
 
+    # Fast marching algorithm
+    Exits = shop.getExits()
+    phi = matrix_representation_for_fast_marching(shop)
+    for exit in Exits:
+        directions = fast_marching_to_exit(phi, exit, shop)
+
+    new_directions = np.zeros((len(directions[0]), len(directions), 2))
+    for i in range(len(directions)):
+        for j in range(len(directions[0])):
+            new_directions[j,i] = directions[i,j]
+    directions = new_directions
+
     i = 0
     while t < T:
 
@@ -146,8 +161,11 @@ def representation_evolution(shop, dt, T):
         # Calculation of the next position of each customer
         for customer in shop.getCustomers():
 
-            dv = dt*exterior_forces(customer, shop, lambd, F_0, d_0, F_wall0, F_stand0, F_exit, beta_customer, beta_wall)
             pos = customer.getPos()
+            if 0 < pos[0] and pos[0] < x_max and 0 < pos[1] and pos[1] < y_max:
+                dv = dt*exterior_forces(customer, shop, lambd, F_0, d_0, F_wall0, F_stand0, F_exit, beta_customer, beta_wall)+2*directions[int(pos[0]), int(pos[1])]
+            else:
+                dv = dt*exterior_forces(customer, shop, lambd, F_0, d_0, F_wall0, F_stand0, F_exit, beta_customer, beta_wall)
             speed = customer.getSpeed()
 
             if norm(speed+dv) < v_max:
@@ -333,3 +351,64 @@ if __name__ == '__main__':
     Shop_test.addCustomer(Customers_test)
 
     representation_evolution(Shop_test, 1, T)
+
+
+
+def fast_marching_to_exit(phi, exit, shop):
+    x1, y1, x2, y2 = exit.getPos()
+    x_max = shop.get_x_max()
+    y_max = shop.get_y_max()
+    X, Y = np.meshgrid(np.linspace(0, x_max, x_max+1), np.linspace(0, y_max, y_max+1))
+
+    phi[np.logical_and(np.logical_and(x1-3 < X, X < x2+3), np.logical_and(y1-3 < Y, Y < y2+3))] = 1
+
+    d = skfmm.distance(phi, dx=1e-4)
+    s = 0
+    directions = np.zeros((y_max+1, x_max+1, 2))
+    for i in range(1, len(d)-1):
+        for j in range(1, len(d[0])-1):
+            distance_min = d[i, j]
+            grad = [0, 0]
+            for k, l in [[i-1, j-1], [i-1, j], [i-1, j+1], [i, j-1], [i, j+1], [i+1, j], [i+1, j-1], [i+1, j+1]]:
+                if d[k, l] <= distance_min:
+                    grad = [k-i,j-l]
+                    distance_min = d[k,l]
+            directions[i, j] = grad
+
+    return directions
+
+
+if __name__=="__main__":
+    def fast_marching_to_exit_with_display(phi, exit, shop):
+        x1, y1, x2, y2 = exit.getPos()
+        x_max = shop.get_x_max()
+        y_max = shop.get_y_max()
+        X, Y = np.meshgrid(np.linspace(0, x_max, x_max+1), np.linspace(0, y_max, y_max+1))
+
+        phi[np.logical_and(np.logical_and(x1-3 < X, X < x2+3), np.logical_and(y1-3 < Y, Y < y2+3))] = 1
+
+        d = skfmm.distance(phi, dx=1e-4)
+        s = 0
+        directions = np.zeros((y_max+1, x_max+1, 2))
+        for i in range(1, len(d)-1):
+            for j in range(1, len(d[0])-1):
+                distance_min = d[i, j]
+                grad = [0, 0]
+                for k, l in [[i-1, j-1], [i-1, j], [i-1, j+1], [i, j-1], [i, j+1], [i+1, j], [i+1, j-1], [i+1, j+1]]:
+                    if d[k, l] <= distance_min:
+                        grad = [k-i,j-l]
+                        distance_min = d[k,l]
+                directions[i, j] = grad
+
+        plt.figure()
+        for i in range(1, len(d)-2):
+            if i % 10 == 1:
+                for j in range(1, len(d[0])-2):
+                    if j % 10 == 1:
+                        plt.quiver(j, i, directions[i, j, 1], directions[i, j, 0])
+                        print(i, j, directions[i,j])
+
+        plt.imshow(d, cmap='Pastel1')
+        plt.show()
+
+        return directions
