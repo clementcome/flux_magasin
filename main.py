@@ -54,3 +54,4 @@ experience_list = []
 # value = one_client(Shop_test_one_client,experience_list, T, dt, lambd, d_0, F_wall0, F_stand0, F_0, v_max, F_exit, beta_customer, beta_wall)
 
 matrix_representation_for_fast_marching(Shop_test_one_client)
+
