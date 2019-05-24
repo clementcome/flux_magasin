@@ -53,9 +53,9 @@ beta_wall = 10
 coef_fast_marching = 5
 experience_list = []
 
-evolution_list(Shop_test_one_client, T, dt, lambd, d_0, F_wall0, F_stand0, F_0, v_max, F_exit, beta_customer, beta_wall, coef_fast_marching)
+# evolution_list(Shop_test_one_client, T, dt, lambd, d_0, F_wall0, F_stand0, F_0, v_max, F_exit, beta_customer, beta_wall, coef_fast_marching)
 
-# value = one_client(Shop_test_one_client,experience_list, T, dt, lambd, d_0, F_wall0, F_stand0, F_0, v_max, F_exit, beta_customer, beta_wall)
+value = one_client(Shop_test_one_client, experience_list, T, dt, lambd, d_0, F_wall0, F_stand0, F_0, v_max, F_exit, beta_customer, beta_wall, coef_fast_marching)
 
 # phi = matrix_representation_for_fast_marching(Shop_test_one_client)
 # fast_marching_to_exit(phi, Exit(0, 100, 0, 150), Shop_test_one_client)
