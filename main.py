@@ -1,6 +1,7 @@
 from model import builder, matrix_representation_for_fast_marching
 from model.environnement import Stand,Customer, Exit
 from model.evolution import representation_evolution,one_client, fast_marching_to_exit, evolution_list
+import json
 import skfmm
 
 T = 300
@@ -39,7 +40,7 @@ Shop_test_one_client = builder([[0, 0],
                      [0, 0]], 45, Stands_test)
 Shop_test_one_client.addCustomer(Customers_test)
 
-T = 1000
+T = 300
 dt = 1
 F_0 = 10
 F_wall0 = 200
@@ -59,3 +60,11 @@ value = one_client(Shop_test_one_client, experience_list, T, dt, lambd, d_0, F_w
 
 # phi = matrix_representation_for_fast_marching(Shop_test_one_client)
 # fast_marching_to_exit(phi, Exit(0, 100, 0, 150), Shop_test_one_client)
+
+with open("..//..//data//positions.txt", "r") as inputfile:
+    data = json.load(inputfile)
+print(type(data))
+Shop = builder(data["polygon_points"],1,[])
+#COmpute RMS
+
+#value = one_client(Shop_test_one_client,experience_list, T, dt, lambd, d_0, F_wall0, F_stand0, F_0, v_max, F_exit, beta_customer, beta_wall)
