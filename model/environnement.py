@@ -334,10 +334,41 @@ class Shop:
         self.clients = []
         self.entries = []
         self.exits = []
+        self.x_max = 0
+        self.y_max = 0
 
         global idShop
         self.id = idShop
         idShop += 1
+
+    def get_x_max(self):
+        """
+        Return the maximal x of the shop
+        :return: x_max
+        """
+        return self.x_max
+
+    def get_y_max(self):
+        """
+        :return: y_max
+        """
+        return self.y_max
+
+    def calculate_x_y_max(self):
+        x_max = 0
+        y_max = 0
+        for wall in self.getWalls():
+            coord = wall.getPos()
+            if coord[0] > x_max:
+                x_max = coord[0]
+            if coord[2] > x_max:
+                x_max = coord[2]
+            if coord[1] > y_max:
+                y_max = coord[1]
+            if coord[3] > y_max:
+                y_max = coord[3]
+        self.x_max = x_max
+        self.y_max = y_max
 
     def getWalls(self):
         '''
