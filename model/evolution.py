@@ -2,11 +2,14 @@ from model.environnement import Wall,StandWall,Shop,Stand,Customer,Entry,Exit
 from model.static_graphic_display import store_display, customers_display
 from model.utils import norm
 from model.forces import exterior_forces, customers_exit
-from model import builder
+from model import builder, matrix_representation_for_fast_marching
 from tkinter import Tk, Canvas
 import time
 import random as rd
 import numpy as np
+import matplotlib.pyplot as plt
+import skfmm
+
 
 COLORS = ['snow', 'ghost white', 'white smoke', 'gainsboro', 'floral white', 'old lace',
     'linen', 'antique white', 'papaya whip', 'blanched almond', 'bisque', 'peach puff',
@@ -73,17 +76,7 @@ COLORS = ['snow', 'ghost white', 'white smoke', 'gainsboro', 'floral white', 'ol
     'MediumOrchid4', 'DarkOrchid1', 'DarkOrchid2', 'DarkOrchid3', 'DarkOrchid4',
     'purple1', 'purple2', 'purple3', 'purple4', 'MediumPurple1', 'MediumPurple2',
     'MediumPurple3', 'MediumPurple4', 'thistle1', 'thistle2', 'thistle3', 'thistle4',
-    'gray1', 'gray2', 'gray3', 'gray4', 'gray5', 'gray6', 'gray7', 'gray8', 'gray9', 'gray10',
-    'gray11', 'gray12', 'gray13', 'gray14', 'gray15', 'gray16', 'gray17', 'gray18', 'gray19',
-    'gray20', 'gray21', 'gray22', 'gray23', 'gray24', 'gray25', 'gray26', 'gray27', 'gray28',
-    'gray29', 'gray30', 'gray31', 'gray32', 'gray33', 'gray34', 'gray35', 'gray36', 'gray37',
-    'gray38', 'gray39', 'gray40', 'gray42', 'gray43', 'gray44', 'gray45', 'gray46', 'gray47',
-    'gray48', 'gray49', 'gray50', 'gray51', 'gray52', 'gray53', 'gray54', 'gray55', 'gray56',
-    'gray57', 'gray58', 'gray59', 'gray60', 'gray61', 'gray62', 'gray63', 'gray64', 'gray65',
-    'gray66', 'gray67', 'gray68', 'gray69', 'gray70', 'gray71', 'gray72', 'gray73', 'gray74',
-    'gray75', 'gray76', 'gray77', 'gray78', 'gray79', 'gray80', 'gray81', 'gray82', 'gray83',
-    'gray84', 'gray85', 'gray86', 'gray87', 'gray88', 'gray89', 'gray90', 'gray91', 'gray92',
-    'gray93', 'gray94', 'gray95', 'gray97', 'gray98', 'gray99']
+    'gray1', 'gray2']
 
 
 def representation_evolution(shop, dt, T):
@@ -108,6 +101,7 @@ def representation_evolution(shop, dt, T):
 
     nb_exit_wall = 0
     nb_exit_legal = 0
+    nb_enter = 0
     flow = shop.getEntries()[0].getFlow()
 
     # Windows creation
@@ -128,6 +122,19 @@ def representation_evolution(shop, dt, T):
 
     # Display the customers' starting point and retrieves the list of clients
     balls_list, lines_list = customers_display(shop, magasin, False)
+    nb_enter += len(balls_list)
+
+    # Fast marching algorithm
+    Exits = shop.getExits()
+    phi = matrix_representation_for_fast_marching(shop)
+    for exit in Exits:
+        directions = fast_marching_to_exit(phi, exit, shop)
+
+    new_directions = np.zeros((len(directions[0]), len(directions), 2))
+    for i in range(len(directions)):
+        for j in range(len(directions[0])):
+            new_directions[j,i] = directions[i,j]
+    directions = new_directions
 
     i = 0
     while t < T:
@@ -141,13 +148,17 @@ def representation_evolution(shop, dt, T):
                 v_x = rd.uniform(-4, 4)
                 v_y = rd.uniform(-4, 4)
                 shop.addCustomer(Customer(x, y, v_x, v_y))
+                nb_enter += 1
                 balls_list.append(magasin.create_oval(x + 5, y + 5, x + 15, y + 15, fill=rd.choice(COLORS)))
 
         # Calculation of the next position of each customer
         for customer in shop.getCustomers():
 
-            dv = dt*exterior_forces(customer, shop, lambd, F_0, d_0, F_wall0, F_stand0, F_exit, beta_customer, beta_wall)
             pos = customer.getPos()
+            if 0 < pos[0] and pos[0] < x_max and 0 < pos[1] and pos[1] < y_max:
+                dv = dt*exterior_forces(customer, shop, lambd, F_0, d_0, F_wall0, F_stand0, F_exit, beta_customer, beta_wall)+.5*directions[int(pos[0]), int(pos[1])]
+            else:
+                dv = dt*exterior_forces(customer, shop, lambd, F_0, d_0, F_wall0, F_stand0, F_exit, beta_customer, beta_wall)
             speed = customer.getSpeed()
 
             if norm(speed+dv) < v_max:
@@ -163,10 +174,9 @@ def representation_evolution(shop, dt, T):
                 speed = customer.getSpeed()
                 magasin.coords(balls_list[customer.getId()], pos[0]+5, pos[1]+5, pos[0]+15, pos[1]+15)
                 if lines_list:
-                    magasin.coords(lines_list[customer.getId()], pos[0]+10, pos[1]+10, pos[0]+5*speed[0]+10, pos[1]+5*speed[1]+10)
+                    magasin.coords(lines_list[customer.getId()], pos[0]+10, pos[1]+10, pos[0]+5*speed[0]+10, pos[1]+10*speed[1]+10)
                 nb_exit_wall, nb_exit_legal = customers_exit(shop, balls_list, lines_list, x_max, y_max, nb_exit_wall, nb_exit_legal, magasin)
             root.update()
-            time.sleep(.01)
             # if i%3 == 0:
             #     magasin.postscript(file="C:\\Users\\coren\\Desktop\\Matieres\\Projet_Mouvement_Foule\\Programme_git\\images\\image{}.ps".format(i), colormode='color')
             # i += 1
@@ -175,9 +185,10 @@ def representation_evolution(shop, dt, T):
     root.mainloop()
     print(nb_exit_wall, 'people escaped through a wall.')
     print(nb_exit_legal, 'people exited legally.')
+    print(nb_enter, 'people entered.')
 
 
-def evolution_list(shop, T, dt, lambd, d_0, F_wall0, F_stand0, F_0, v_max, F_exit, beta_customer, beta_wall):
+def evolution_list(shop, T, dt, lambd, d_0, F_wall0, F_stand0, F_0, v_max, F_exit, beta_customer, beta_wall, coef_fast_marching):
     """"
     Function that computes the evolution of the system and returns the trajectories of the clients
     :param shop: (Shop) Shop considered
@@ -192,38 +203,45 @@ def evolution_list(shop, T, dt, lambd, d_0, F_wall0, F_stand0, F_0, v_max, F_exi
     :param F_exit: (float) Coefficient applied to the force linked with the exit
     :param beta_customer: (float) Coefficient in the exponential when computing the social force
     :param beta_wall: (float) Coefficient in the exponential when computing the wall force
+    :param coef_fast_marching: (float) Coefficient applied to the wanted speed calculated with the fast marching algorithm
     :return: (list) List of the positions of all the clients over time
     """
 
     nb_exit_wall = 0
     nb_exit_legal = 0
+    nb_enter = 0
 
-    murs = shop.getWalls()
+    x_max = shop.get_x_max()
+    y_max = shop.get_y_max()
 
-    x_max = 0
-    y_max = 0
-    for mur in murs:
-        coord = mur.getPos()
-        if coord[0] > x_max:
-            x_max = coord[0]
-        if coord[2] > x_max:
-            x_max = coord[2]
-        if coord[1] > y_max:
-            y_max = coord[1]
-        if coord[3] > y_max:
-            y_max = coord[3]
+    # Fast marching algorithm
+    Exits = shop.getExits()
+    phi = matrix_representation_for_fast_marching(shop)
+    for exit in Exits:
+        directions = fast_marching_to_exit(phi, exit, shop)
+
+    new_directions = np.zeros((len(directions[0]), len(directions), 2))
+    for i in range(len(directions)):
+        for j in range(len(directions[0])):
+            new_directions[j,i] = directions[i,j]
+    directions = new_directions
 
     t = 0
     syst = {}
     for customer in shop.getCustomers():
+        nb_enter += 1
         syst[customer.getId()] = []
 
     while t < T:
         # Calculation of the next position of each customer
         for customer in shop.getCustomers():
-            syst[customer.getId()] += [customer.getPos()[0], customer.getPos()[1]]
+            syst[customer.getId()] += [[customer.getPos()[0], customer.getPos()[1]]]
+            pos = customer.getPos()
 
-            dv = dt*exterior_forces(customer, shop, lambd, F_0, d_0, F_wall0, F_stand0, F_exit, beta_customer, beta_wall)
+            if 0 < pos[0] and pos[0] < x_max and 0 < pos[1] and pos[1] < y_max:
+                dv = dt*exterior_forces(customer, shop, lambd, F_0, d_0, F_wall0, F_stand0, F_exit, beta_customer, beta_wall)+coef_fast_marching*directions[int(pos[0]), int(pos[1])]
+            else:
+                dv = dt*exterior_forces(customer, shop, lambd, F_0, d_0, F_wall0, F_stand0, F_exit, beta_customer, beta_wall)
             pos = customer.getPos()
             speed = customer.getSpeed()
 
@@ -236,10 +254,11 @@ def evolution_list(shop, T, dt, lambd, d_0, F_wall0, F_stand0, F_0, v_max, F_exi
         t += dt
     print(nb_exit_wall, 'people escaped through a wall.')
     print(nb_exit_legal, 'people exited legally.')
+    print(nb_enter, 'people entered.')
     return syst
 
 
-def one_client(shop, experience_list, T, dt, lambd, d_0, F_wall0, F_stand0, F_0, v_max, F_exit, beta_customer, beta_wall):
+def one_client(shop, experience_list, T, dt, lambd, d_0, F_wall0, F_stand0, F_0, v_max, F_exit, beta_customer, beta_wall, coef_fast_marching):
     """"
     Function that computes the evolution of the system and returns the trajectories of the clients. Only the movement of the first client is modeled by our algorithm, the movement of the other clients is modeled by data
     :param shop: (Shop) Shop considered, without clients
@@ -255,6 +274,7 @@ def one_client(shop, experience_list, T, dt, lambd, d_0, F_wall0, F_stand0, F_0,
     :param F_exit: (float) Coefficient applied to the force linked with the exit
     :param beta_customer: (float) Coefficient in the exponential when computing the social force
     :param beta_wall: (float) Coefficient in the exponential when computing the wall force
+    :param coef_fast_marching: (float) Coefficient applied to the wanted speed calculated with the fast marching algorithm
     :return: (list) List of the positions of all the clients over time
     """
     #Removing the clients in the shop if there are any
@@ -275,6 +295,18 @@ def one_client(shop, experience_list, T, dt, lambd, d_0, F_wall0, F_stand0, F_0,
         shop.addCustomer(customer)
         id_list.append(customer.getId())
 
+    # Fast marching algorithm
+    Exits = shop.getExits()
+    phi = matrix_representation_for_fast_marching(shop)
+    for exit in Exits:
+        directions = fast_marching_to_exit(phi, exit, shop)
+
+    new_directions = np.zeros((len(directions[0]), len(directions), 2))
+    for i in range(len(directions)):
+        for j in range(len(directions[0])):
+            new_directions[j,i] = directions[i,j]
+    directions = new_directions
+
     t = 0
     ind = 1
     syst = {}
@@ -288,10 +320,12 @@ def one_client(shop, experience_list, T, dt, lambd, d_0, F_wall0, F_stand0, F_0,
             syst[customer.getId()] += [customer.getPos()[0], customer.getPos()[1]]
 
             if id_list[i] == customer_test.getId():
-                dv = dt * exterior_forces(customer, shop, lambd, F_0, d_0, F_wall0, F_stand0, F_exit, beta_customer,
-                                          beta_wall)
                 pos = customer.getPos()
                 speed = customer.getSpeed()
+                if 0 < pos[0] and pos[0] < x_max and 0 < pos[1] and pos[1] < y_max:
+                    dv = dt*exterior_forces(customer, shop, lambd, F_0, d_0, F_wall0, F_stand0, F_exit, beta_customer, beta_wall)+coef_fast_marching*directions[int(pos[0]), int(pos[1])]
+                else:
+                    dv = dt*exterior_forces(customer, shop, lambd, F_0, d_0, F_wall0, F_stand0, F_exit, beta_customer, beta_wall)
 
                 if norm(speed + dv) < v_max:
                     customer.setSpeed(speed + dv)
@@ -302,7 +336,7 @@ def one_client(shop, experience_list, T, dt, lambd, d_0, F_wall0, F_stand0, F_0,
                 customer.setPos(experience_list[ind][i][0],experience_list[ind][i][1])
                 customer.setSpeed((experience_list[ind+1][i][0]-experience_list[ind][i][0])/dt,(experience_list[ind+1][i][1]-experience_list[ind][i][1])/dt)
 
-        ind+=1
+        ind += 1
     RMS = 0
     for i in range(len(syst[customer_test.getId()])):
         RMS += (norm([experience_list[i][ind_client_considered][0]-syst[customer_test.getId()][i][0],experience_list[i][ind_client_considered][1]-syst[customer_test.getId()][i][1]]))**2
@@ -333,3 +367,63 @@ if __name__ == '__main__':
     Shop_test.addCustomer(Customers_test)
 
     representation_evolution(Shop_test, 1, T)
+
+
+
+def fast_marching_to_exit(phi, exit, shop):
+    x1, y1, x2, y2 = exit.getPos()
+    x_max = shop.get_x_max()
+    y_max = shop.get_y_max()
+    X, Y = np.meshgrid(np.linspace(0, x_max, x_max+1), np.linspace(0, y_max, y_max+1))
+
+    phi[np.logical_and(np.logical_and(x1-3 < X, X < x2+3), np.logical_and(y1-3 < Y, Y < y2+3))] = 1
+
+    d = skfmm.distance(phi, dx=1e-4)
+    s = 0
+    directions = np.zeros((y_max+1, x_max+1, 2))
+    for i in range(1, len(d)-1):
+        for j in range(1, len(d[0])-1):
+            distance_min = d[i, j]
+            grad = [0, 0]
+            for k, l in [[i-1, j-1], [i-1, j], [i-1, j+1], [i, j-1], [i, j+1], [i+1, j], [i+1, j-1], [i+1, j+1]]:
+                if d[k, l] <= distance_min:
+                    grad = [k-i,j-l]
+                    distance_min = d[k,l]
+            directions[i, j] = grad
+
+    return directions
+
+
+def fast_marching_to_exit_with_display(phi, exit, shop):
+    x1, y1, x2, y2 = exit.getPos()
+    x_max = shop.get_x_max()
+    y_max = shop.get_y_max()
+    X, Y = np.meshgrid(np.linspace(0, x_max, x_max+1), np.linspace(0, y_max, y_max+1))
+
+    phi[np.logical_and(np.logical_and(x1-3 < X, X < x2+3), np.logical_and(y1-3 < Y, Y < y2+3))] = 1
+
+    d = skfmm.distance(phi, dx=1e-4)
+    s = 0
+    directions = np.zeros((y_max+1, x_max+1, 2))
+    for i in range(1, len(d)-1):
+        for j in range(1, len(d[0])-1):
+            distance_min = d[i, j]
+            grad = [0, 0]
+            for k, l in [[i-1, j-1], [i-1, j], [i-1, j+1], [i, j-1], [i, j+1], [i+1, j], [i+1, j-1], [i+1, j+1]]:
+                if d[k, l] <= distance_min:
+                    grad = [k-i,j-l]
+                    distance_min = d[k,l]
+            directions[i, j] = grad
+
+    plt.figure()
+    for i in range(1, len(d)-2):
+        if i % 10 == 1:
+            for j in range(1, len(d[0])-2):
+                if j % 10 == 1:
+                    plt.quiver(j, i, directions[i, j, 1], directions[i, j, 0])
+                    print(i, j, directions[i,j])
+
+    plt.imshow(d, cmap='Pastel1')
+    plt.show()
+
+    return directions

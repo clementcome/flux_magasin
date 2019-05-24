@@ -1,6 +1,8 @@
 from model.environnement import Wall, StandWall, Shop, Stand, Customer, Entry, Exit
 import numpy as np
 import matplotlib.pyplot as plt
+import skfmm
+from math import inf
 
 
 def builder(walls_list, flux, stands_list):
@@ -40,10 +42,11 @@ def builder(walls_list, flux, stands_list):
 
 def matrix_representation_for_fast_marching(shop):
 
+    list_masked = []
     x_max = shop.get_x_max()
     y_max = shop.get_y_max()
     X, Y = np.meshgrid(np.linspace(0, x_max, x_max+1), np.linspace(0, y_max, y_max+1))
-    phi = np.ones((y_max+1, x_max+1))
+    phi = -1 * np.ones((y_max+1, x_max+1))
 
     for stand in shop.getStands():
         x1, y1, x2, y2 = stand.getPos()
@@ -51,5 +54,4 @@ def matrix_representation_for_fast_marching(shop):
         phi = np.ma.MaskedArray(phi, mask)
 
     return phi
-
 
