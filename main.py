@@ -4,6 +4,7 @@ from model.evolution import representation_evolution, one_client, fast_marching_
 from model.link_with_video import shop_and_data
 import json
 import skfmm
+import scipy.optimize as optimize
 
 T = 300
 
@@ -60,5 +61,17 @@ experience_list = []
 # fast_marching_to_exit(phi, Exit(0, 100, 0, 150), Shop_test_one_client)
 
 [Shop, trajectory_list] = shop_and_data()
-RMS = one_client(Shop, trajectory_list, dt, lambd, d_0, F_wall0, F_stand0, F_0, v_max,F_exit, beta_customer, beta_wall, coef_fast_marching)
-print(RMS)
+
+def RMS(variables):
+    global Shop
+    global trajectory_list
+    global dt
+    return one_client(Shop, trajectory_list, dt, variables[0], variables[1], variables[2], variables[3], variables[4], variables[5],variables[6], variables[7], variables[8], variables[9])
+
+init_values = [lambd, d_0, F_wall0, F_stand0, F_0, v_max,F_exit, beta_customer, beta_wall, coef_fast_marching]
+result = optimize.minimize(RMS, init_values, tol=20)
+if result.success:
+    fitted_params = result.x
+    print(fitted_params)
+else:
+    raise ValueError(result.message)

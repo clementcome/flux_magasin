@@ -64,5 +64,5 @@ def shop_and_data():
     x_min = 0
     y_min = 0
 
-    Shop = builder([[x_min,y_min],[x_max,y_min],[x_max,y_max],[x_min,y_max],[x_min,y_min]],1,[])
+    Shop = builder([[x_min,y_min],"entree",[x_max,y_min],"entree",[x_max,y_max],"entree",[x_min,y_max],"entree",[x_min,y_min]],1,[])
     return [Shop, data["li_real_positions"]]
