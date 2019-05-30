@@ -10,4 +10,4 @@ def display_comparison(real_trajectory, calculated_trajectory, other_trajectorie
             if other_trajectories[i][t][1] > y_max:
                 y_max = other_trajectories[i][t][1]
 
-    
+

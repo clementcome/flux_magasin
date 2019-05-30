@@ -39,7 +39,7 @@ def window_creation_test(shop):
 
 
 def shop_and_data():
-    with open("..//..//data//positions.txt", "r") as inputfile:
+    with open("..//data//positions.txt", "r") as inputfile:
         data = json.load(inputfile)
     x_min = inf
     x_max = -inf

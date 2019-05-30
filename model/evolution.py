@@ -279,17 +279,19 @@ def one_client(shop, experience_list, dt, lambd, d_0, F_wall0, F_stand0, F_0, v_
     :return: (list) List of the positions of all the clients over time
     """
     #Removing the clients in the shop if there are any
+
     if len(shop.getCustomers())!=0:
         customers = shop.getCustomers()
         for customer in customers:
             shop.removeCustomer(customer)
+
     #Adding the clients
     id_list = []
 
-    customer_test = Customer(experience_list[0][0][0],experience_list[0][0][1],(experience_list[1][0][0]-experience_list[0][0][0])/dt,(experience_list[1][0][1]-experience_list[0][0][1])/dt)
+    customer_considered_index = 0
+    customer_test = Customer(experience_list[0][customer_considered_index][0],experience_list[0][customer_considered_index][1],(experience_list[1][customer_considered_index][0]-experience_list[0][customer_considered_index][0])/dt,(experience_list[1][customer_considered_index][1]-experience_list[0][customer_considered_index][1])/dt)
     shop.addCustomer(customer_test)
     id_list.append(customer_test.getId())
-    ind_client_considered = 0
 
     for i in range(1,len(experience_list[0])):
         customer = Customer(experience_list[0][i][0],experience_list[0][i][1],(experience_list[1][i][0]-experience_list[0][i][0])/dt,(experience_list[1][i][1]-experience_list[0][i][1])/dt)
@@ -342,12 +344,18 @@ def one_client(shop, experience_list, dt, lambd, d_0, F_wall0, F_stand0, F_0, v_
             else:
                 customer.setPos([experience_list[ind][i][0],experience_list[ind][i][1]])
                 customer.setSpeed([(experience_list[ind+1][i][0]-experience_list[ind][i][0])/dt,(experience_list[ind+1][i][1]-experience_list[ind][i][1])/dt])
-
         ind += 1
+
     RMS = 0
     for i in range(len(syst[customer_test.getId()])):
-        RMS += (norm([experience_list[i][ind_client_considered][0]-syst[customer_test.getId()][i][0],experience_list[i][ind_client_considered][1]-syst[customer_test.getId()][i][1]]))**2
-    return np.sqrt((1/len(syst[customer_test.getId()]))*RMS)
+        RMS += (norm([experience_list[i][customer_considered_index][0]-syst[customer_test.getId()][i][0],experience_list[i][customer_considered_index][1]-syst[customer_test.getId()][i][1]]))**2
+
+    real_trajectory = []
+    for t in range(len(experience_list)):
+        real_trajectory.append(experience_list[t][customer_considered_index])
+    del experience_list[customer_considered_index]
+
+    return {'calculated_trajectory':syst[customer_test.getId()], 'real_trajectory':real_trajectory,'RMS':np.sqrt((1/len(syst[customer_test.getId()]))*RMS), 'other_trajectories':experience_list}
 
 
 if __name__ == '__main__':
