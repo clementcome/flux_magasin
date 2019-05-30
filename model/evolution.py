@@ -377,13 +377,16 @@ def fast_marching_to_exit(phi, exit, shop):
     x1, y1, x2, y2 = exit.getPos()
     x_max = shop.get_x_max()
     y_max = shop.get_y_max()
-    X, Y = np.meshgrid(np.linspace(0, x_max, x_max+1), np.linspace(0, y_max, y_max+1))
+    x_min = shop.get_x_min()
+    y_min = shop.get_y_min()
+
+    X, Y = np.meshgrid(np.linspace(0, x_max-x_min, x_max-x_min+1), np.linspace(0, y_max-y_min, y_max-y_min+1))
 
     phi[np.logical_and(np.logical_and(x1-3 < X, X < x2+3), np.logical_and(y1-3 < Y, Y < y2+3))] = 1
 
     d = skfmm.distance(phi, dx=1e-4)
     s = 0
-    directions = np.zeros((y_max+1, x_max+1, 2))
+    directions = np.zeros((y_max-y_min+1, x_max-x_min+1, 2))
     for i in range(1, len(d)-1):
         for j in range(1, len(d[0])-1):
             distance_min = d[i, j]
