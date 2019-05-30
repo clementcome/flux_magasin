@@ -260,12 +260,11 @@ def evolution_list(shop, T, dt, lambd, d_0, F_wall0, F_stand0, F_0, v_max, F_exi
     return syst
 
 
-def one_client(shop, experience_list, dt, lambd, d_0, F_wall0, F_stand0, F_0, F_exit, beta_customer, beta_wall, coef_fast_marching):
+def one_client(shop, experience_list, dt, lambd, d_0, F_wall0, F_stand0, F_0, v_max,F_exit, beta_customer, beta_wall, coef_fast_marching):
     """"
     Function that computes the evolution of the system and returns the trajectories of the clients. Only the movement of the first client is modeled by our algorithm, the movement of the other clients is modeled by data
     :param shop: (Shop) Shop considered, without clients
     :param experience_list: (list) List returned by the experience, with the coordinates of all the clients at all the times. The first client is the one that will be modeled by our model
-    :param T: (float) Time frame considered
     :param dt: (float) Time step
     :param lambd: (function) Function that characterises the repulsion of the walls
     :param d_0: (float) Diameter of a person
@@ -300,6 +299,12 @@ def one_client(shop, experience_list, dt, lambd, d_0, F_wall0, F_stand0, F_0, F_
     # Fast marching algorithm
     Exits = shop.getExits()
     phi = matrix_representation_for_fast_marching(shop)
+
+    x_max = int(shop.get_x_max())
+    y_max = int(shop.get_y_max())
+
+    directions = np.zeros((int(y_max + 1), int(x_max + 1), 2))
+
     for exit in Exits:
         directions = fast_marching_to_exit(phi, exit, shop)
 
@@ -315,20 +320,17 @@ def one_client(shop, experience_list, dt, lambd, d_0, F_wall0, F_stand0, F_0, F_
     for customer in shop.getCustomers():
         syst[customer.getId()] = []
 
-    x_max = int(shop.get_x_max())
-    y_max = int(shop.get_y_max())
-
-    while ind < len(experience_list[0])-1:
+    while ind < len(experience_list)-1:
         # Calculation of the next position of each customer
-        for i in range(id_list):
+        for i in range(len(id_list)):
             customer = shop.getCustomerById(id_list[i])
-            syst[customer.getId()] += [customer.getPos()[0], customer.getPos()[1]]
+            syst[customer.getId()].append([customer.getPos()[0], customer.getPos()[1]])
 
             if id_list[i] == customer_test.getId():
                 pos = customer.getPos()
                 speed = customer.getSpeed()
                 if 0 < pos[0] and pos[0] < x_max and 0 < pos[1] and pos[1] < y_max:
-                    dv = dt*exterior_forces(customer, shop, lambd, F_0, d_0, F_wall0, F_stand0, F_exit, beta_customer, beta_wall)+coef_fast_marching*directions[int(pos[0]), int(pos[1])]
+                    dv = dt*exterior_forces(customer, shop, lambd, F_0, d_0, F_wall0, F_stand0, F_exit, beta_customer, beta_wall) #+coef_fast_marching*directions[int(pos[0]), int(pos[1])]
                 else:
                     dv = dt*exterior_forces(customer, shop, lambd, F_0, d_0, F_wall0, F_stand0, F_exit, beta_customer, beta_wall)
 
@@ -338,14 +340,15 @@ def one_client(shop, experience_list, dt, lambd, d_0, F_wall0, F_stand0, F_0, F_
                     customer.setSpeed(((speed + dv) / norm(speed + dv)) * v_max)
                 customer.setPos(pos + dt * speed + dt * dv)
             else:
-                customer.setPos(experience_list[ind][i][0],experience_list[ind][i][1])
-                customer.setSpeed((experience_list[ind+1][i][0]-experience_list[ind][i][0])/dt,(experience_list[ind+1][i][1]-experience_list[ind][i][1])/dt)
+                customer.setPos([experience_list[ind][i][0],experience_list[ind][i][1]])
+                customer.setSpeed([(experience_list[ind+1][i][0]-experience_list[ind][i][0])/dt,(experience_list[ind+1][i][1]-experience_list[ind][i][1])/dt])
 
         ind += 1
     RMS = 0
     for i in range(len(syst[customer_test.getId()])):
         RMS += (norm([experience_list[i][ind_client_considered][0]-syst[customer_test.getId()][i][0],experience_list[i][ind_client_considered][1]-syst[customer_test.getId()][i][1]]))**2
     return np.sqrt((1/len(syst[customer_test.getId()]))*RMS)
+
 
 if __name__ == '__main__':
 
