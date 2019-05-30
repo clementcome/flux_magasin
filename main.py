@@ -67,16 +67,38 @@ experience_list = []
 
 [Shop, trajectory_list] = shop_and_data()
 
+
 def RMS(variables):
     global Shop
     global trajectory_list
     global dt
-    return one_client(Shop, trajectory_list, dt, variables[0], variables[1], variables[2], variables[3], variables[4], variables[5],variables[6], variables[7], variables[8], variables[9])
+    return one_client(Shop, trajectory_list, dt, variables[0], variables[1], variables[2], variables[3], variables[4], variables[5],variables[6], variables[7], variables[8], variables[9])['RMS']
 
 init_values = [lambd, d_0, F_wall0, F_stand0, F_0, v_max,F_exit, beta_customer, beta_wall, coef_fast_marching]
-result = optimize.minimize(RMS, init_values, tol=20)
+result = optimize.minimize(RMS, init_values, tol=30)
 if result.success:
     fitted_params = result.x
     print(fitted_params)
 else:
     raise ValueError(result.message)
+def RMS_beta(beta_customer):
+    global Shop
+    global trajectory_list
+    global dt
+    global lambd
+    global d_0
+    global F_exit
+    global F_stand0
+    global F_wall0
+    global v_max
+    global beta_wall
+    global coef_fast_marching
+    return one_client(Shop, trajectory_list, dt, lambd, d_0, F_wall0, F_stand0, F_0, v_max,F_exit, beta_customer, beta_wall, coef_fast_marching)['RMS']
+
+init_value = beta_wall
+result_beta = optimize.minimize(RMS_beta, init_value, tol=5)
+if result_beta.success:
+    fitted_params_beta = result_beta.x
+    print(fitted_params_beta)
+else:
+    raise ValueError(result_beta.message)
