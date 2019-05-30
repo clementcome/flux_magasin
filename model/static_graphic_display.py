@@ -13,23 +13,14 @@ def window_creation(shop):
 
     # Search the size of the window we should use
     walls = shop.getWalls()
-    x_max = 0
-    y_max = 0
-    for wall in walls:
-        coord = wall.getPos()
-        if coord[0] > x_max:
-            x_max = coord[0]
-        if coord[2] > x_max:
-            x_max = coord[2]
-        if coord[1] > y_max:
-            y_max = coord[1]
-        if coord[3] > y_max:
-            y_max = coord[3]
-
+    x_max, y_max = shop.get_x_max(), shop.get_y_max()
+    x_min, y_min = shop.get_x_min(), shop.get_y_min()
 
     global store
     store = Canvas(root, width=x_max + 15, height=y_max + 15)
     store.pack()
+
+    store.create_rectangle(x_min, y_min, x_max, y_max)
 
 def legend_creation():
     """

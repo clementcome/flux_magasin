@@ -37,23 +37,25 @@ def window_creation_test(shop):
     store = Canvas(root, width=x_max + 15, height=y_max + 15)
     store.pack()
 
-with open("..//..//..//data//positions.txt", "r") as inputfile:
-    data = json.load(inputfile)
-x_min = inf
-x_max = -inf
-y_min = inf
-y_max = -inf
-for client_time in data["li_real_positions"]:
-    for client in client_time:
-        if client[0]<x_min:
-            x_min = client[0]
-        if client[0]>x_max:
-            x_max = client[0]
-        if client[1]<y_min:
-            y_min = client[1]
-        if client[1]>y_max:
-            y_max = client[1]
 
-Shop = builder([[x_min,y_min],[x_max,y_min],[x_max,y_max],[x_min,y_max],[x_min,y_min]],1,[])
-#Shop = builder([[0,0],[100,0],[100,100],[0,100],[0,0]],1,[])
-print(Shop.getWalls())
+if __name__ == '__main__':
+    with open("..//..//..//data//positions.txt", "r") as inputfile:
+        data = json.load(inputfile)
+    x_min = inf
+    x_max = -inf
+    y_min = inf
+    y_max = -inf
+    for client_time in data["li_real_positions"]:
+        for client in client_time:
+            if client[0]<x_min:
+                x_min = client[0]
+            if client[0]>x_max:
+                x_max = client[0]
+            if client[1]<y_min:
+                y_min = client[1]
+            if client[1]>y_max:
+                y_max = client[1]
+
+    Shop = builder([[x_min,y_min],[x_max,y_min],[x_max,y_max],[x_min,y_max],[x_min,y_min]],1,[])
+    #Shop = builder([[0,0],[100,0],[100,100],[0,100],[0,0]],1,[])
+    print(Shop.getWalls())

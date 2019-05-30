@@ -336,6 +336,8 @@ class Shop:
         self.exits = []
         self.x_max = 0
         self.y_max = 0
+        self.x_min = 0
+        self.y_min = 0
 
         global idShop
         self.id = idShop
@@ -347,6 +349,20 @@ class Shop:
         :return: x_max
         """
         return self.x_max
+
+    def get_x_min(self):
+        """
+        Return the minimal x of the shop
+        :return: x_min
+        """
+        return self.x_min
+
+    def get_y_min(self):
+        """
+        Return the minimal y of the shop
+        :return: y_min
+        """
+        return self.y_min
 
     def get_y_max(self):
         """
@@ -369,6 +385,22 @@ class Shop:
                 y_max = coord[3]
         self.x_max = x_max
         self.y_max = y_max
+
+    def calculate_x_y_min(self):
+        x_min = 0
+        y_min = 0
+        for wall in self.getWalls():
+            coord = wall.getPos()
+            if coord[0] < x_min:
+                x_min = coord[0]
+            if coord[2] < x_min:
+                x_min = coord[2]
+            if coord[1] < y_min:
+                y_min = coord[1]
+            if coord[3] < y_min:
+                y_min = coord[3]
+        self.x_min = x_min
+        self.y_min = y_min
 
     def getWalls(self):
         '''
