@@ -1,6 +1,7 @@
 from model import builder, matrix_representation_for_fast_marching
 from model.environnement import Stand,Customer, Exit
 from model.evolution import representation_evolution,one_client, fast_marching_to_exit, evolution_list
+from model.link_with_video import build_from_video
 import json
 import skfmm
 
@@ -56,7 +57,7 @@ experience_list = []
 
 # evolution_list(Shop_test_one_client, T, dt, lambd, d_0, F_wall0, F_stand0, F_0, v_max, F_exit, beta_customer, beta_wall, coef_fast_marching)
 
-value = one_client(Shop_test_one_client, experience_list, T, dt, lambd, d_0, F_wall0, F_stand0, F_0, v_max, F_exit, beta_customer, beta_wall, coef_fast_marching)
+# value = one_client(Shop_test_one_client, experience_list, T, dt, lambd, d_0, F_wall0, F_stand0, F_0, v_max, F_exit, beta_customer, beta_wall, coef_fast_marching)
 
 # phi = matrix_representation_for_fast_marching(Shop_test_one_client)
 # fast_marching_to_exit(phi, Exit(0, 100, 0, 150), Shop_test_one_client)
@@ -64,3 +65,5 @@ value = one_client(Shop_test_one_client, experience_list, T, dt, lambd, d_0, F_w
 
 
 #value = one_client(Shop_test_one_client,experience_list, T, dt, lambd, d_0, F_wall0, F_stand0, F_0, v_max, F_exit, beta_customer, beta_wall)
+
+build_from_video()
