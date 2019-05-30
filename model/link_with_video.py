@@ -38,8 +38,8 @@ def window_creation_test(shop):
     store.pack()
 
 
-if __name__ == '__main__':
-    with open("..//..//..//data//positions.txt", "r") as inputfile:
+def shop_and_data():
+    with open("..//..//data//positions.txt", "r") as inputfile:
         data = json.load(inputfile)
     x_min = inf
     x_max = -inf
@@ -55,28 +55,14 @@ if __name__ == '__main__':
                 y_min = client[1]
             if client[1]>y_max:
                 y_max = client[1]
+    for client_time_ind in range(len(data["li_real_positions"])):
+        for i in range(len(data["li_real_positions"][client_time_ind])):
+            data["li_real_positions"][client_time_ind][i][0] = data["li_real_positions"][client_time_ind][i][0] - x_min
+            data["li_real_positions"][client_time_ind][i][1] = data["li_real_positions"][client_time_ind][i][1] - y_min
+    x_max = x_max - x_min
+    y_max = y_max - y_min
+    x_min = 0
+    y_min = 0
 
     Shop = builder([[x_min,y_min],[x_max,y_min],[x_max,y_max],[x_min,y_max],[x_min,y_min]],1,[])
-    #Shop = builder([[0,0],[100,0],[100,100],[0,100],[0,0]],1,[])
-    print(Shop.getWalls())
-
-    # window_creation_test(Shop)
-    # store_display(Shop, store)
-    # customers_display(Shop, store)
-    # root.mainloop()
-
-    coef_fast_marching = 5
-    dt = 1
-    F_0 = 10
-    F_wall0 = 200
-    d_0 = 1
-    F_stand0 = F_wall0/4
-    F_exit = 10
-    v_max = 4
-    lambd = 1/2
-    beta_customer = 10
-    beta_wall = 10
-    experience_list = []
-
-    RMS = one_client(Shop, data["li_real_positions"], dt, lambd, d_0,F_wall0, F_0, v_max, F_exit, beta_customer, beta_wall, coef_fast_marching)
-    print(RMS)
+    return [Shop, data["li_real_positions"]]
