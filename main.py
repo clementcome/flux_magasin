@@ -31,7 +31,7 @@ Shop_test.addStand(Stands_test)
 # Shop_test.addExit(Exits_test)
 Shop_test.addCustomer(Customers_test)
 
-representation_evolution(Shop_test, .1, T)
+#representation_evolution(Shop_test, .1, T)
 
 # optimisation
 Shop_test_one_client = builder([[0, 0],
