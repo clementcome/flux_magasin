@@ -13,17 +13,16 @@ def window_creation(shop):
 
     # Search the size of the window we should use
     walls = shop.getWalls()
+    shop.calculate_x_y_min()
+    shop.calculate_x_y_max()
     x_max, y_max = shop.get_x_max(), shop.get_y_max()
     x_min, y_min = shop.get_x_min(), shop.get_y_min()
+    print(x_min, y_min)
 
     global store
-    store = Canvas(root, width=x_max + 20, height=y_max + 20)
+    store = Canvas(root, width=x_max + 15, height=y_max + 15)
     store.pack()
 
-    store.create_rectangle(x_min, y_min, x_max, y_max)
-    # store['scrollregion'] = (x_min - 10, y_min - 10, x_max + 10, y_max + 10)
-
-    return root, store
 
 
 def legend_creation():
@@ -106,8 +105,6 @@ def store_display(shop, canvas):
         elif coord[1] == coord[3]:
             for i in range(5, 15):
                 canvas.create_line(coord[0] + 13, coord[1] + i, coord[2] + 10, coord[3] + i, width=1, fill='red', dash=(1, 1))
-
-    root.mainloop()
 
 
 def customers_display(shop, canvas, direction=False):
