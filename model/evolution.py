@@ -258,7 +258,7 @@ def evolution_list(shop, T, dt, lambd, d_0, F_wall0, F_stand0, F_0, v_max, F_exi
     return syst
 
 
-def one_client(shop, experience_list, T, dt, lambd, d_0, F_wall0, F_stand0, F_0, v_max, F_exit, beta_customer, beta_wall, coef_fast_marching):
+def one_client(shop, experience_list, dt, lambd, d_0, F_wall0, F_stand0, F_0, F_exit, beta_customer, beta_wall, coef_fast_marching):
     """"
     Function that computes the evolution of the system and returns the trajectories of the clients. Only the movement of the first client is modeled by our algorithm, the movement of the other clients is modeled by data
     :param shop: (Shop) Shop considered, without clients
@@ -312,6 +312,9 @@ def one_client(shop, experience_list, T, dt, lambd, d_0, F_wall0, F_stand0, F_0,
     syst = {}
     for customer in shop.getCustomers():
         syst[customer.getId()] = []
+
+    x_max = int(shop.get_x_max())
+    y_max = int(shop.get_y_max())
 
     while ind < len(experience_list[0])-1:
         # Calculation of the next position of each customer
