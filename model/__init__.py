@@ -45,8 +45,11 @@ def matrix_representation_for_fast_marching(shop):
     list_masked = []
     x_max = shop.get_x_max()
     y_max = shop.get_y_max()
-    X, Y = np.meshgrid(np.linspace(0, x_max, x_max+1), np.linspace(0, y_max, y_max+1))
-    phi = -1 * np.ones((y_max+1, x_max+1))
+    x_min = shop.get_x_min()
+    y_min = shop.get_y_min()
+
+    X, Y = np.meshgrid(np.linspace(0, x_max - x_min, x_max-x_min+1), np.linspace(0, y_max-y_min, y_max-y_min+1))
+    phi = -1 * np.ones((y_max-y_min+1, x_max-x_min+1))
 
     for stand in shop.getStands():
         x1, y1, x2, y2 = stand.getPos()

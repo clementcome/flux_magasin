@@ -17,10 +17,14 @@ def window_creation(shop):
     x_min, y_min = shop.get_x_min(), shop.get_y_min()
 
     global store
-    store = Canvas(root, width=x_max + 15, height=y_max + 15)
+    store = Canvas(root, width=x_max + 20, height=y_max + 20)
     store.pack()
 
     store.create_rectangle(x_min, y_min, x_max, y_max)
+    # store['scrollregion'] = (x_min - 10, y_min - 10, x_max + 10, y_max + 10)
+
+    return root, store
+
 
 def legend_creation():
     """
@@ -56,6 +60,7 @@ def legend_creation():
     canvas.create_text(110, 225, text='Customer')
 
     window.mainloop()
+
 
 def store_display(shop, canvas):
     """
@@ -101,6 +106,8 @@ def store_display(shop, canvas):
         elif coord[1] == coord[3]:
             for i in range(5, 15):
                 canvas.create_line(coord[0] + 13, coord[1] + i, coord[2] + 10, coord[3] + i, width=1, fill='red', dash=(1, 1))
+
+    root.mainloop()
 
 
 def customers_display(shop, canvas, direction=False):
