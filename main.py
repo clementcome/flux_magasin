@@ -20,7 +20,7 @@ Shop_test = builder([[0, 0],
                      [150, 200], "entree", [180, 200],
                      [300, 200], [300, 0],
                      [245, 0], "entree", [200, 0],
-                     [0, 0]], 20, Stands_test)
+                     [0, 0]], 50, Stands_test)
 # Shop_test.addWall(Walls_test)
 Shop_test.addStand(Stands_test)
 # Shop_test.addEntry(Entries_test)
@@ -30,7 +30,7 @@ Shop_test.addCustomer(Customers_test)
 representation_evolution(Shop_test, .1, T)
 
 
-##optimisation
+# optimisation
 Shop_test_one_client = builder([[0, 0],
                      [0, 100], "sortie", [0, 150],
                      [0, 200],
@@ -56,12 +56,10 @@ experience_list = []
 
 evolution_list(Shop_test_one_client, T, dt, lambd, d_0, F_wall0, F_stand0, F_0, v_max, F_exit, beta_customer, beta_wall, coef_fast_marching)
 
-#value = one_client(Shop_test_one_client, experience_list, dt, lambd, d_0, F_wall0, F_stand0, F_0, F_exit, beta_customer, beta_wall, coef_fast_marching)
+# value = one_client(Shop_test_one_client, experience_list, dt, lambd, d_0, F_wall0, F_stand0, F_0, F_exit, beta_customer, beta_wall, coef_fast_marching)
 
-#matrix_representation_for_fast_marching(Shop_test_one_client)
+# matrix_representation_for_fast_marching(Shop_test_one_client)
 # phi = matrix_representation_for_fast_marching(Shop_test_one_client)
 # fast_marching_to_exit(phi, Exit(0, 100, 0, 150), Shop_test_one_client)
 
-
-
-#value = one_client(Shop_test_one_client,experience_list, T, dt, lambd, d_0, F_wall0, F_stand0, F_0, v_max, F_exit, beta_customer, beta_wall)
+# value = one_client(Shop_test_one_client,experience_list, T, dt, lambd, d_0, F_wall0, F_stand0, F_0, v_max, F_exit, beta_customer, beta_wall)
