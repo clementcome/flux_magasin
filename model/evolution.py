@@ -127,6 +127,8 @@ def representation_evolution(shop, dt, T):
     # Fast marching algorithm
     Exits = shop.getExits()
     phi = matrix_representation_for_fast_marching(shop)
+    plt.imshow(phi)
+    plt.show()
     for exit in Exits:
         directions = fast_marching_to_exit(phi, exit, shop)
 
@@ -380,6 +382,7 @@ def fast_marching_to_exit(phi, exit, shop):
     x1, y1, x2, y2 = exit.getPos()
     x_max = shop.get_x_max()
     y_max = shop.get_y_max()
+
     X, Y = np.meshgrid(np.linspace(0, x_max, x_max+1), np.linspace(0, y_max, y_max+1))
 
     phi[np.logical_and(np.logical_and(x1-3 < X, X < x2+3), np.logical_and(y1-3 < Y, Y < y2+3))] = 1

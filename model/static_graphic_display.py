@@ -13,14 +13,17 @@ def window_creation(shop):
 
     # Search the size of the window we should use
     walls = shop.getWalls()
+    shop.calculate_x_y_min()
+    shop.calculate_x_y_max()
     x_max, y_max = shop.get_x_max(), shop.get_y_max()
     x_min, y_min = shop.get_x_min(), shop.get_y_min()
+    print(x_min, y_min)
 
     global store
     store = Canvas(root, width=x_max + 15, height=y_max + 15)
     store.pack()
 
-    store.create_rectangle(x_min, y_min, x_max, y_max)
+
 
 def legend_creation():
     """
@@ -56,6 +59,7 @@ def legend_creation():
     canvas.create_text(110, 225, text='Customer')
 
     window.mainloop()
+
 
 def store_display(shop, canvas):
     """
