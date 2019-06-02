@@ -38,8 +38,8 @@ def window_creation_test(shop):
     store.pack()
 
 
-def shop_and_data():
-    with open("..//..//data//positions.txt", "r") as inputfile:
+def shop_and_data(path):
+    with open(path, "r") as inputfile:
         data = json.load(inputfile)
     x_min = inf
     x_max = -inf
