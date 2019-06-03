@@ -314,7 +314,6 @@ def one_client(shop, experience_list, dt, lambd, d_0, F_wall0, F_stand0, F_0, v_
             new_directions[j,i] = directions[i,j]
     directions = new_directions
 
-    t = 0
     ind = 1
     syst = {}
     for customer in shop.getCustomers():
@@ -351,9 +350,17 @@ def one_client(shop, experience_list, dt, lambd, d_0, F_wall0, F_stand0, F_0, v_
     real_trajectory = []
     for t in range(len(experience_list)):
         real_trajectory.append(experience_list[t][customer_considered_index])
-    del experience_list[customer_considered_index]
-
-    return {'calculated_trajectory':syst[customer_test.getId()], 'real_trajectory':real_trajectory,'RMS':np.sqrt((1/len(syst[customer_test.getId()]))*RMS), 'other_trajectories':experience_list}
+    #del experience_list[customer_considered_index]
+    other_trajectories = []
+    for t in range(len(experience_list)):
+        for ind_client in range(len(experience_list[t])):
+            res = []
+            if ind_client!=customer_considered_index:
+                res.append(experience_list[t][ind_client])
+            other_trajectories.append(res)
+    if len(syst[customer_test.getId()])==0:
+        print(len(experience_list),id_list)
+    return {'calculated_trajectory':syst[customer_test.getId()], 'real_trajectory':real_trajectory,'RMS':np.sqrt((1/len(syst[customer_test.getId()]))*RMS), 'other_trajectories':other_trajectories}
 
 
 if __name__ == '__main__':

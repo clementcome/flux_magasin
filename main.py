@@ -8,6 +8,7 @@ from model.link_with_video import shop_and_data
 from model.display import display_comparison
 import json
 import skfmm
+import scipy.optimize as optimize
 
 T = 300
 
@@ -31,7 +32,7 @@ Shop_test.addStand(Stands_test)
 # Shop_test.addExit(Exits_test)
 Shop_test.addCustomer(Customers_test)
 
-# representation_evolution(Shop_test, .1, T)
+#representation_evolution(Shop_test, .1, T)
 
 # optimisation
 Shop_test_one_client = builder([[0, 0],
