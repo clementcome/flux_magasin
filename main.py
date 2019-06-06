@@ -5,6 +5,7 @@ from model.static_graphic_display import window_creation, store_display
 from model.environnement import Stand, Customer, Exit
 from model.evolution import representation_evolution, one_client, fast_marching_to_exit, evolution_list
 from model.link_with_video import shop_and_data
+from model.display import display_comparison
 import json
 import skfmm
 import scipy.optimize as optimize
@@ -65,3 +66,6 @@ experience_list = []
 # phi = matrix_representation_for_fast_marching(Shop_test_one_client)
 # fast_marching_to_exit(phi, Exit(0, 100, 0, 150), Shop_test_one_client)
 
+[Shop, trajectory_list] = shop_and_data()
+result = one_client(Shop, trajectory_list, dt, lambd, d_0, F_wall0, F_stand0, F_0, v_max,F_exit, beta_customer, beta_wall, coef_fast_marching)
+display_comparison(result['real_trajectory'], result['calculated_trajectory'], result['other_trajectories'], Shop)
