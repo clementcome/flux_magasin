@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import skfmm
 from math import inf
+import seaborn as sns
 
 
 def builder(walls_list, flux, stands_list):
@@ -53,7 +54,6 @@ def matrix_representation_for_fast_marching(shop):
         x1, y1, x2, y2 = stand.getPos()
         mask = np.logical_and(np.logical_and(x2 < X, X < x1), np.logical_and(y2 < Y, Y < y1))
         phi = np.ma.MaskedArray(phi, mask)
-
 
     return phi
 

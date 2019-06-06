@@ -383,6 +383,26 @@ class Shop:
                 y_max = coord[1]
             if coord[3] > y_max:
                 y_max = coord[3]
+        for exit in self.getExits():
+            coord = exit.getPos()
+            if coord[0] > x_max:
+                x_max = coord[0]
+            if coord[2] > x_max:
+                x_max = coord[2]
+            if coord[1] > y_max:
+                y_max = coord[1]
+            if coord[3] > y_max:
+                y_max = coord[3]
+        for entry in self.getEntries():
+            coord = entry.getPos()
+            if coord[0] > x_max:
+                x_max = coord[0]
+            if coord[2] > x_max:
+                x_max = coord[2]
+            if coord[1] > y_max:
+                y_max = coord[1]
+            if coord[3] > y_max:
+                y_max = coord[3]
         self.x_max = x_max
         self.y_max = y_max
 
@@ -391,6 +411,26 @@ class Shop:
         y_min = 0
         for wall in self.getWalls():
             coord = wall.getPos()
+            if coord[0] < x_min:
+                x_min = coord[0]
+            if coord[2] < x_min:
+                x_min = coord[2]
+            if coord[1] < y_min:
+                y_min = coord[1]
+            if coord[3] < y_min:
+                y_min = coord[3]
+        for exit in self.getExits():
+            coord = exit.getPos()
+            if coord[0] < x_min:
+                x_min = coord[0]
+            if coord[2] < x_min:
+                x_min = coord[2]
+            if coord[1] < y_min:
+                y_min = coord[1]
+            if coord[3] < y_min:
+                y_min = coord[3]
+        for entry in self.getEntries():
+            coord = entry.getPos()
             if coord[0] < x_min:
                 x_min = coord[0]
             if coord[2] < x_min:

@@ -218,13 +218,8 @@ def evolution_list(shop, T, dt, lambd, d_0, F_wall0, F_stand0, F_0, v_max, F_exi
     Exits = shop.getExits()
     phi = matrix_representation_for_fast_marching(shop)
     for exit in Exits:
-        directions = fast_marching_to_exit(phi, exit, shop)
+        gradient_x, gradient_y = fast_marching_to_exit(phi, exit, shop)
 
-    new_directions = np.zeros((len(directions[0]), len(directions), 2))
-    for i in range(len(directions)):
-        for j in range(len(directions[0])):
-            new_directions[j,i] = directions[i,j]
-    directions = new_directions
 
     t = 0
     syst = {}
@@ -239,7 +234,7 @@ def evolution_list(shop, T, dt, lambd, d_0, F_wall0, F_stand0, F_0, v_max, F_exi
             pos = customer.getPos()
 
             if 0 < pos[0] and pos[0] < x_max and 0 < pos[1] and pos[1] < y_max:
-                dv = dt*exterior_forces(customer, shop, lambd, F_0, d_0, F_wall0, F_stand0, F_exit, beta_customer, beta_wall)+coef_fast_marching*directions[int(pos[0]), int(pos[1])]
+                dv = dt*exterior_forces(customer, shop, lambd, F_0, d_0, F_wall0, F_stand0, F_exit, beta_customer, beta_wall)+coef_fast_marching*[gradient_y[int(pos[0]), int(pos[1])],gradient_x[int(pos[0]), int(pos[1])]]
             else:
                 dv = dt*exterior_forces(customer, shop, lambd, F_0, d_0, F_wall0, F_stand0, F_exit, beta_customer, beta_wall)
             pos = customer.getPos()
@@ -276,25 +271,41 @@ def one_client(shop, experience_list, dt, lambd, d_0, F_wall0, F_stand0, F_0, v_
     :param coef_fast_marching: (float) Coefficient applied to the wanted speed calculated with the fast marching algorithm
     :return: (list) List of the positions of all the clients over time
     """
-    #Removing the clients in the shop if there are any
+    # Removing the clients in the shop if there are any
 
     if len(shop.getCustomers())!=0:
         customers = shop.getCustomers()
         for customer in customers:
             shop.removeCustomer(customer)
 
-    #Adding the clients
-    id_list = []
+    customer_considered_index = 6
 
-    customer_considered_index = 0
+    # Adding an exit at the final point of the trajectory of the client we consider
+
+    pos_exit = experience_list[-1][customer_considered_index]
+    shop.addExit(Exit(int(pos_exit[0]), int(pos_exit[1]), int(pos_exit[0]), int(pos_exit[1])))
+
+    # Adding the clients
+    # Warning : some clients arrive during the test
+    T = len(experience_list)
+    N = len(experience_list[0])
+    for t in range(T):
+        if len(experience_list[t]) > N:
+            N = len(experience_list[t])
+
+    id_list = ['']*N
+
+    id = 0
     customer_test = Customer(experience_list[0][customer_considered_index][0],experience_list[0][customer_considered_index][1],(experience_list[1][customer_considered_index][0]-experience_list[0][customer_considered_index][0])/dt,(experience_list[1][customer_considered_index][1]-experience_list[0][customer_considered_index][1])/dt)
     shop.addCustomer(customer_test)
-    id_list.append(customer_test.getId())
+    id_list[id] = customer_test.getId()
 
-    for i in range(1,len(experience_list[0])):
-        customer = Customer(experience_list[0][i][0],experience_list[0][i][1],(experience_list[1][i][0]-experience_list[0][i][0])/dt,(experience_list[1][i][1]-experience_list[0][i][1])/dt)
-        shop.addCustomer(customer)
-        id_list.append(customer.getId())
+    for i in range(0, len(experience_list[0])):
+        if i != customer_considered_index:
+            id += 1
+            customer = Customer(experience_list[0][i][0], experience_list[0][i][1], (experience_list[1][i][0]-experience_list[0][i][0])/dt, (experience_list[1][i][1]-experience_list[0][i][1])/dt)
+            shop.addCustomer(customer)
+            id_list[id] = customer.getId()
 
     # Fast marching algorithm
     Exits = shop.getExits()
@@ -303,18 +314,17 @@ def one_client(shop, experience_list, dt, lambd, d_0, F_wall0, F_stand0, F_0, v_
     x_max = int(shop.get_x_max())
     y_max = int(shop.get_y_max())
 
-    directions = np.zeros((int(y_max + 1), int(x_max + 1), 2))
 
     for exit in Exits:
-        directions = fast_marching_to_exit(phi, exit, shop)
+        gradient_x, gradient_y = fast_marching_to_exit_with_display(phi, exit, shop)
+    #
+    # new_directions = np.zeros((len(directions[0]), len(directions), 2))
+    # for i in range(len(directions)):
+    #     for j in range(len(directions[0])):
+    #         new_directions[j,i] = directions[i,j]
+    # directions = new_directions
 
-    new_directions = np.zeros((len(directions[0]), len(directions), 2))
-    for i in range(len(directions)):
-        for j in range(len(directions[0])):
-            new_directions[j,i] = directions[i,j]
-    directions = new_directions
-
-    ind = 1
+    ind = 0
     syst = {}
     for customer in shop.getCustomers():
         syst[customer.getId()] = []
@@ -322,25 +332,32 @@ def one_client(shop, experience_list, dt, lambd, d_0, F_wall0, F_stand0, F_0, v_
     while ind < len(experience_list)-1:
         # Calculation of the next position of each customer
         for i in range(len(id_list)):
-            customer = shop.getCustomerById(id_list[i])
-            syst[customer.getId()].append([customer.getPos()[0], customer.getPos()[1]])
+            if id_list[i] != '':
+                customer = shop.getCustomerById(id_list[i])
+                syst[customer.getId()].append([customer.getPos()[0], customer.getPos()[1]])
 
-            if id_list[i] == customer_test.getId():
-                pos = customer.getPos()
-                speed = customer.getSpeed()
-                if 0 < pos[0] and pos[0] < x_max and 0 < pos[1] and pos[1] < y_max:
-                    dv = dt*exterior_forces(customer, shop, lambd, F_0, d_0, F_wall0, F_stand0, F_exit, beta_customer, beta_wall) #+coef_fast_marching*directions[int(pos[0]), int(pos[1])]
-                else:
-                    dv = dt*exterior_forces(customer, shop, lambd, F_0, d_0, F_wall0, F_stand0, F_exit, beta_customer, beta_wall)
+                if id_list[i] == customer_test.getId():
+                    pos = customer.getPos()
+                    speed = customer.getSpeed()
+                    if 0 < pos[0] and pos[0] < x_max and 0 < pos[1] and pos[1] < y_max:
+                        dv = dt*exterior_forces(customer, shop, lambd, F_0, d_0, F_wall0, F_stand0, F_exit, beta_customer, beta_wall) + coef_fast_marching * np.array([gradient_y[int(pos[1]), int(pos[0])], gradient_x[int(pos[1]), int(pos[0])]])
+                    else:
+                        dv = dt*exterior_forces(customer, shop, lambd, F_0, d_0, F_wall0, F_stand0, F_exit, beta_customer, beta_wall)
 
-                if norm(speed + dv) < v_max:
-                    customer.setSpeed(speed + dv)
+                    if norm(speed + dv) < v_max:
+                        customer.setSpeed(speed + dv)
+                    else:
+                        customer.setSpeed(((speed + dv) / norm(speed + dv)) * v_max)
+                    customer.setPos(pos + dt * speed + dt * dv)
                 else:
-                    customer.setSpeed(((speed + dv) / norm(speed + dv)) * v_max)
-                customer.setPos(pos + dt * speed + dt * dv)
+                    customer.setPos([experience_list[ind][i][0],experience_list[ind][i][1]])
+                    customer.setSpeed([(experience_list[ind+1][i][0]-experience_list[ind][i][0])/dt,(experience_list[ind+1][i][1]-experience_list[ind][i][1])/dt])
             else:
-                customer.setPos([experience_list[ind][i][0],experience_list[ind][i][1]])
-                customer.setSpeed([(experience_list[ind+1][i][0]-experience_list[ind][i][0])/dt,(experience_list[ind+1][i][1]-experience_list[ind][i][1])/dt])
+                if i <= len(experience_list[ind])-1: # If a new client enters
+                    customer = Customer(experience_list[ind][i][0], experience_list[ind][i][1], (experience_list[ind+1][i][0]-experience_list[ind][i][0])/dt, (experience_list[ind+1][i][1]-experience_list[ind][i][1])/dt)
+                    shop.addCustomer(customer)
+                    id_list[i] = customer.getId()
+                    syst[customer.getId()] = []
         ind += 1
 
     RMS = 0
@@ -353,11 +370,11 @@ def one_client(shop, experience_list, dt, lambd, d_0, F_wall0, F_stand0, F_0, v_
     #del experience_list[customer_considered_index]
     other_trajectories = []
     for t in range(len(experience_list)):
+        res = []
         for ind_client in range(len(experience_list[t])):
-            res = []
             if ind_client!=customer_considered_index:
                 res.append(experience_list[t][ind_client])
-            other_trajectories.append(res)
+        other_trajectories.append(res)
     if len(syst[customer_test.getId()])==0:
         print(len(experience_list),id_list)
     return {'calculated_trajectory':syst[customer_test.getId()], 'real_trajectory':real_trajectory,'RMS':np.sqrt((1/len(syst[customer_test.getId()]))*RMS), 'other_trajectories':other_trajectories}
@@ -393,8 +410,8 @@ if __name__ == '__main__':
 
 def fast_marching_to_exit(phi, exit, shop):
     x1, y1, x2, y2 = exit.getPos()
-    x_max = shop.get_x_max()
-    y_max = shop.get_y_max()
+    x_max = int(shop.get_x_max())
+    y_max = int(shop.get_y_max())
 
     X, Y = np.meshgrid(np.linspace(0, x_max, x_max+1), np.linspace(0, y_max, y_max+1))
 
@@ -402,18 +419,10 @@ def fast_marching_to_exit(phi, exit, shop):
 
     d = skfmm.distance(phi, dx=1e-4)
     s = 0
-    directions = np.zeros((y_max+1, x_max+1, 2))
-    for i in range(1, len(d)-1):
-        for j in range(1, len(d[0])-1):
-            distance_min = d[i, j]
-            grad = [0, 0]
-            for k, l in [[i-1, j-1], [i-1, j], [i-1, j+1], [i, j-1], [i, j+1], [i+1, j], [i+1, j-1], [i+1, j+1]]:
-                if d[k, l] <= distance_min:
-                    grad = [k-i,j-l]
-                    distance_min = d[k,l]
-            directions[i, j] = grad
+    gradient_x = np.gradient(d)[0]
+    gradient_y = np.gradient(d)[1]
 
-    return directions
+    return gradient_x, gradient_y
 
 
 def fast_marching_to_exit_with_display(phi, exit, shop):
@@ -426,26 +435,56 @@ def fast_marching_to_exit_with_display(phi, exit, shop):
 
     d = skfmm.distance(phi, dx=1e-4)
     s = 0
-    directions = np.zeros((y_max+1, x_max+1, 2))
-    for i in range(1, len(d)-1):
-        for j in range(1, len(d[0])-1):
-            distance_min = d[i, j]
-            grad = [0, 0]
-            for k, l in [[i-1, j-1], [i-1, j], [i-1, j+1], [i, j-1], [i, j+1], [i+1, j], [i+1, j-1], [i+1, j+1]]:
-                if d[k, l] <= distance_min:
-                    grad = [k-i,j-l]
-                    distance_min = d[k,l]
-            directions[i, j] = grad
+
+    d = np.array(np.array(d)*500)
+    plt.imshow(d, cmap=plt.cm.get_cmap('CMRmap', 13))
+    plt.axvline(x=0, ymin=50/200, ymax=1/2, c='crimson', linewidth='3', label='sortie')
+    cbar = plt.colorbar()
+    cbar.set_label('Distance à la sortie (en m)')
+    axes = plt.gca()
+    axes.set_xlabel('X (en m)')
+    axes.set_ylabel('Y (en m)')
+    axes.xaxis.set_ticks([i for i in range(301) if i%100==0])
+    axes.xaxis.set_ticklabels(['0', '5', '10', '15', '20', '25', '30'])
+    axes.yaxis.set_ticks([i for i in range(201) if i%100==0])
+    axes.yaxis.set_ticklabels(['0', '5', '10', '15', '20'])
+    plt.legend()
+    plt.show()
+
+    gradient_x = np.gradient(d)[0]
+    gradient_y = np.gradient(d)[1]
+    # for i in range(1, len(d)-1):
+    #     for j in range(1, len(d[0])-1):
+    #         distance_min = d[i, j]
+    #         grad = [0, 0]
+    #         for k, l in [[i-1, j-1], [i-1, j], [i-1, j+1], [i, j-1], [i, j+1], [i+1, j], [i+1, j-1], [i+1, j+1]]:
+    #             if d[k, l] <= distance_min:
+    #                 grad = [k-i,j-l]
+    #                 distance_min = d[k,l]
+    #         directions[i, j] = grad
 
     plt.figure()
     for i in range(1, len(d)-2):
-        if i % 10 == 1:
+        if i % 20 == 9:
             for j in range(1, len(d[0])-2):
-                if j % 10 == 1:
-                    plt.quiver(j, i, directions[i, j, 1], directions[i, j, 0])
-                    print(i, j, directions[i,j])
+                if j % 20 == 9:
+                    plt.quiver(j, i, gradient_y[i, j], -gradient_x[i, j])
+    plt.quiver(9,9,gradient_y[9,9],-gradient_x[9,9],label='Direction voulue')
 
-    plt.imshow(d, cmap='Pastel1')
+    d = np.array(np.array(d)*500)
+    plt.imshow(d, cmap=plt.cm.get_cmap('CMRmap', 13))
+    plt.axvline(x=0, ymin=50/200, ymax=1/2, c='crimson', linewidth='3', label='sortie')
+    cbar = plt.colorbar()
+    cbar.set_label('Distance à la sortie (en m)')
+    axes = plt.gca()
+    axes.set_xlabel('X (en m)')
+    axes.set_ylabel('Y (en m)')
+    axes.xaxis.set_ticks([i for i in range(301) if i%100==0])
+    axes.xaxis.set_ticklabels(['0', '5', '10', '15', '20', '25', '30'])
+    axes.yaxis.set_ticks([i for i in range(201) if i%100==0])
+    axes.yaxis.set_ticklabels(['0', '5', '10', '15', '20'])
+    plt.legend(loc='upper right')
     plt.show()
 
-    return directions
+
+    return gradient_x, gradient_y
