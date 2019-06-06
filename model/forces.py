@@ -80,8 +80,6 @@ def exterior_forces(customer, shop, lambd, F_0, d_0, F_wall0, F_stand0 , F_exit,
                  else:
                      forces = forces - F_stand0 * np.exp((d_0 / 2 - dist) / beta_wall) * stand_wall.getNormal()
 
-    for exit in shop.exits:
-        forces += exitForce(customer, exit, F_exit)
 
     return forces
 

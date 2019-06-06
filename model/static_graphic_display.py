@@ -1,5 +1,6 @@
 from tkinter import Tk, Canvas
 from model.environnement import Wall,StandWall,Shop,Stand,Customer,Entry,Exit
+import time
 
 def window_creation(shop):
     """

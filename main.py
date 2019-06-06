@@ -1,11 +1,12 @@
 from model import builder, matrix_representation_for_fast_marching
 from model.environnement import Stand,Customer, Exit
 from model.evolution import representation_evolution,one_client, fast_marching_to_exit, evolution_list
-from model.static_graphic_display import window_creation, store_display
+from model.static_graphic_display import window_creation, store_display, legend_creation
 from model.environnement import Stand, Customer, Exit
-from model.evolution import representation_evolution, one_client, fast_marching_to_exit, evolution_list
+from model.evolution import representation_evolution, one_client, fast_marching_to_exit, evolution_list, fast_marching_to_exit_with_display
 from model.link_with_video import shop_and_data
-from model.display import display_comparison
+from model.display import display_comparison, display_trajectory, display_ideal
+import matplotlib.pyplot as plt
 import json
 import skfmm
 import scipy.optimize as optimize
@@ -32,16 +33,15 @@ Shop_test.addStand(Stands_test)
 # Shop_test.addExit(Exits_test)
 Shop_test.addCustomer(Customers_test)
 
-#representation_evolution(Shop_test, .1, T)
+# representation_evolution(Shop_test, .1, T)
 
 # optimisation
-Shop_test_one_client = builder([[0, 0],
-                                [0, 100], "sortie", [0, 150],
+Shop_test_one_client = builder([[0,0],
                                 [0, 200],
                                 [150, 200], "entree_sortie", [180, 200],
                                 [300, 200], [300, 0],
                                 [245, 0], "entree", [200, 0],
-                                [0, 0]], 45, Stands_test)
+                                [10, 0]], 45, Stands_test)
 Shop_test_one_client.addCustomer(Customers_test)
 
 T = 300
@@ -51,11 +51,11 @@ F_wall0 = 200
 d_0 = 1
 F_stand0 = F_wall0/4
 F_exit = 10
-v_max = 4
+v_max = .1
 lambd = 1/2
 beta_customer = 10
 beta_wall = 10
-coef_fast_marching = 5
+coef_fast_marching = 5*10**3
 experience_list = []
 
 #evolution_list(Shop_test_one_client, T, dt, lambd, d_0, F_wall0, F_stand0, F_0, v_max, F_exit, beta_customer, beta_wall, coef_fast_marching)
@@ -64,8 +64,14 @@ experience_list = []
 
 # matrix_representation_for_fast_marching(Shop_test_one_client)
 # phi = matrix_representation_for_fast_marching(Shop_test_one_client)
-# fast_marching_to_exit(phi, Exit(0, 100, 0, 150), Shop_test_one_client)
+# fast_marching_to_exit_with_display(phi, Exit(0, 100, 0, 150), Shop_test_one_client)
 
-[Shop, trajectory_list] = shop_and_data()
-result = one_client(Shop, trajectory_list, dt, lambd, d_0, F_wall0, F_stand0, F_0, v_max,F_exit, beta_customer, beta_wall, coef_fast_marching)
-display_comparison(result['real_trajectory'], result['calculated_trajectory'], result['other_trajectories'], Shop)
+#[Shop, trajectory_list] = shop_and_data('..\data\positions.txt')
+#result = one_client(Shop, trajectory_list, dt, lambd, d_0, F_wall0, F_stand0, F_0, v_max,F_exit, beta_customer, beta_wall, coef_fast_marching)
+# display_comparison(result['real_trajectory'], result['calculated_trajectory'], result['other_trajectories'], Shop)
+# display_trajectory(result['real_trajectory'], result['calculated_trajectory'], result['other_trajectories'])
+
+shop = matrix_representation_for_fast_marching(Shop_test_one_client)
+result = evolution_list(Shop_test_one_client, T, dt, lambd, d_0, F_wall0, F_stand0, F_0, v_max, F_exit, beta_customer, beta_wall, coef_fast_marching)
+plt.imshow(shop)
+plt.show()
