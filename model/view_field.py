@@ -1,6 +1,6 @@
-from model.environnement import Wall,StandWall,Shop,Stand,Client,Entry,Exit
+from model.environnement import Wall,StandWall,Shop,Stand,Customer,Entry,Exit
 from model.intersections import intersectionHalf,intersectPointLine, intersectionSeg
-from model.representation_graphique_statique import affichage_magasin
+from model.static_graphic_display import store_display
 from model.utils import norm
 import numpy as np
 from tkinter import Tk, Canvas
@@ -244,7 +244,7 @@ if __name__ == '__main__':
     Entrees_test = [Entry(200,0,245,0,45), Entry(150,200,180,200,45)]
     Sorties_test = [Exit(0,100,0,150), Exit(150,200,180,200)]
     Meubles_test = [Stand(0,0,25,50), Stand(150,150,250,180),Stand(100,100,170,140)]
-    Clients_test = [Client(45,78,3,4,6), Client(187,23,7,7,7)]
+    Clients_test = [Customer(45,78,3,4,6), Customer(187,23,7,7,7)]
 
 
     Shop_test = Shop('test')
@@ -262,7 +262,7 @@ if __name__ == '__main__':
 
 
     creation_fenetre_fov(Shop_test)
-    affichage_magasin(Shop_test, magasin)
+    store_display(Shop_test, magasin)
 
     i = 0
     points = view_field(Shop_test.getStands()[i], Shop_test)
