@@ -2,6 +2,7 @@ from tkinter import Tk, Canvas
 from model.static_graphic_display import store_display
 import time
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 def display_comparison(real_trajectory, calculated_trajectory, other_trajectories, shop):
@@ -106,5 +107,10 @@ def display_trajectory(real_trajectory, calculated_trajectory, other_trajectorie
 def display_ideal(shop, trajectory):
     plt.figure()
     plt.imshow(shop)
-    plt.plot(trajectory)
+    X = []
+    Y = []
+    for i in range(len(trajectory)):
+        X.append(trajectory[i][0])
+        Y.append(trajectory[i][1])
+    plt.plot(X,Y)
     plt.show()

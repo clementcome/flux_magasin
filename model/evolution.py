@@ -234,7 +234,7 @@ def evolution_list(shop, T, dt, lambd, d_0, F_wall0, F_stand0, F_0, v_max, F_exi
             pos = customer.getPos()
 
             if 0 < pos[0] and pos[0] < x_max and 0 < pos[1] and pos[1] < y_max:
-                dv = dt*exterior_forces(customer, shop, lambd, F_0, d_0, F_wall0, F_stand0, F_exit, beta_customer, beta_wall)+coef_fast_marching*[gradient_y[int(pos[0]), int(pos[1])],gradient_x[int(pos[0]), int(pos[1])]]
+                dv = dt*exterior_forces(customer, shop, lambd, F_0, d_0, F_wall0, F_stand0, F_exit, beta_customer, beta_wall)+coef_fast_marching * np.array([gradient_y[int(pos[1]), int(pos[0])], gradient_x[int(pos[1]), int(pos[0])]])
             else:
                 dv = dt*exterior_forces(customer, shop, lambd, F_0, d_0, F_wall0, F_stand0, F_exit, beta_customer, beta_wall)
             pos = customer.getPos()
