@@ -316,7 +316,7 @@ def one_client(shop, experience_list, dt, lambd, d_0, F_wall0, F_stand0, F_0, v_
 
 
     for exit in Exits:
-        gradient_x, gradient_y = fast_marching_to_exit_with_display(phi, exit, shop)
+        gradient_x, gradient_y = fast_marching_to_exit(phi, exit, shop)
     #
     # new_directions = np.zeros((len(directions[0]), len(directions), 2))
     # for i in range(len(directions)):
