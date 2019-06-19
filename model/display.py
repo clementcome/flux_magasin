@@ -97,9 +97,7 @@ def display_trajectory(real_trajectory, calculated_trajectory, other_trajectorie
     axes.xaxis.set_ticklabels(['0', '5', '10', '15', '20', '25', '30'])
     axes.yaxis.set_ticks([i for i in range(400) if i%200==0])
     axes.yaxis.set_ticklabels(['0', '5', '10', '15', '20'])
-    axes.set_aspect(1)
-
-    plt.legend(loc=2)
+    axes.tick_params(direction='out', length=0, width=0, colors='r',grid_color='g', grid_alpha=0.5)
 
     plt.show()
 

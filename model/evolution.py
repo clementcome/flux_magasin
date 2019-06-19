@@ -214,6 +214,8 @@ def evolution_list(shop, T, dt, lambd, d_0, F_wall0, F_stand0, F_0, v_max, F_exi
     x_max = shop.get_x_max()
     y_max = shop.get_y_max()
 
+
+
     # Fast marching algorithm
     Exits = shop.getExits()
     phi = matrix_representation_for_fast_marching(shop)
@@ -228,7 +230,9 @@ def evolution_list(shop, T, dt, lambd, d_0, F_wall0, F_stand0, F_0, v_max, F_exi
         syst[customer.getId()] = []
 
     while t < T:
+        print(t)
         # Calculation of the next position of each customer
+
         for customer in shop.getCustomers():
             syst[customer.getId()] += [[customer.getPos()[0], customer.getPos()[1]]]
             pos = customer.getPos()
@@ -487,4 +491,4 @@ def fast_marching_to_exit_with_display(phi, exit, shop):
     plt.show()
 
 
-    return gradient_x, gradient_y
+    return d, gradient_x, gradient_y
